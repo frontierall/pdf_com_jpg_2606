@@ -2,7 +2,7 @@
 
 PDF·이미지 관련 작업을 브라우저에서 처리할 수 있는 웹 기반 도구 모음입니다. 모든 처리는 클라이언트 측에서 이루어지며 서버로 파일이 전송되지 않습니다.
 
-웹 URL : https://ldjwj.github.io/pdf_com_jpg_2603/
+웹 URL : https://frontierall.github.io/pdf_com_jpg_2606/
 
 ## 기능
 
@@ -68,16 +68,27 @@ PDF·이미지 관련 작업을 브라우저에서 처리할 수 있는 웹 기�
 ## 파일 구조
 
 ```
-pdf_com_jpg/
+pdf_com_jpg_2606/
 ├── index.html    # 메인 HTML 파일
 ├── style.css     # 스타일시트
 ├── script.js     # JavaScript 로직
+├── .gitignore    # Git 제외 파일 목록
 └── README.md     # 프로젝트 설명
 ```
 
 ---
 
 ## 버전 기록
+
+### v3.1.0 (2026-06-28)
+**GitHub Pages 배포 및 방문자 카운터 업데이트**
+
+#### 변경 사항
+- GitHub Pages 배포: `frontierall.github.io/pdf_com_jpg_2606`
+- 방문자 카운터 URL을 새 배포 주소로 변경 (카운트 초기화)
+- Git 저장소 초기화 및 `.gitignore` 추가
+
+---
 
 ### v3.0.0 (2026-05-13)
 **이미지 압축 도구 추가**
