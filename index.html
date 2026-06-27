@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HX95FKPQRF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HX95FKPQRF');
+    </script>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- pdf-lib -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile Hamburger Menu Button -->
+        <button id="hamburgerBtn" class="hamburger-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Mobile Overlay -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h1>PDF Tools</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tool="converter">
+                    <span class="nav-icon">?ì∑</span>
+                    <span class="nav-text">?¥Î?ÏßÄ Î≥Ä??/span>
+                </button>
+                <button class="nav-item" data-tool="imageCompressor">
+                    <span class="nav-icon">?óúÔ∏?/span>
+                    <span class="nav-text">?¥Î?ÏßÄ ?ïÏ∂ï</span>
+                </button>
+                <button class="nav-item" data-tool="compressor">
+                    <span class="nav-icon">?ì¶</span>
+                    <span class="nav-text">PDF ?ïÏ∂ï</span>
+                </button>
+                <button class="nav-item" data-tool="merger">
+                    <span class="nav-icon">?îó</span>
+                    <span class="nav-text">PDF Î≥ëÌï©</span>
+                </button>
+                <button class="nav-item" data-tool="splitter">
+                    <span class="nav-icon">?ÇÔ∏è</span>
+                    <span class="nav-text">PDF Î∂ÑÌï†</span>
+                </button>
+                <button class="nav-item" data-tool="pageEditor">
+                    <span class="nav-icon">?îÑ</span>
+                    <span class="nav-text">?òÏù¥ÏßÄ ?∏Ïßë</span>
+                </button>
+                <button class="nav-item" data-tool="metadata">
+                    <span class="nav-icon">?πÔ∏è</span>
+                    <span class="nav-text">Î©îÌ??∞Ïù¥??/span>
+                </button>
+                <button class="nav-item" data-tool="watermark">
+                    <span class="nav-icon">?íß</span>
+                    <span class="nav-text">?åÌÑ∞ÎßàÌÅ¨</span>
+                </button>
+            </nav>
+            <!-- Î∞©Î¨∏??Ïπ¥Ïö¥??-->
+            <div style="text-align: center; padding: 12px 0; margin-top: auto;">
+              <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fldjwj.github.io%2Fpdf_com_jpg_2603%2F&label=visitors&labelColor=%23555555&countColor=%234A90D9&style=flat-square"/>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- ===== Image Converter Tool ===== -->
+            <div id="converterTool" class="tool-container">
+                <div class="container">
+                    <h2 class="tool-title">PDF to Image Converter</h2>
+                    <p class="subtitle">PDF ?åÏùº??JPG/PNG ?¥Î?ÏßÄÎ°?Î≥Ä?òÌï©?àÎã§</p>
+
+                    <div id="dropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="selectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="fileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="fileInfo" class="file-info hidden">
+                        <span id="fileName"></span>
+                        <span id="pageCount"></span>
+                        <button type="button" id="removeFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="settingsPanel" class="settings-panel hidden">
+                        <h3>Î≥Ä???§Ï†ï</h3>
+
+                        <div class="setting-group">
+                            <label>?¥Î?ÏßÄ ?ïÏãù</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="format" value="jpeg" checked>
+                                    <span>JPG</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="format" value="png">
+                                    <span>PNG</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-group" id="qualityGroup">
+                            <label for="qualitySlider">
+                                ?¥Î?ÏßÄ ?àÏßà: <span id="qualityValue">0.9</span>
+                            </label>
+                            <input type="range" id="qualitySlider" min="0.1" max="1" step="0.1" value="0.9">
+                            <div class="slider-labels">
+                                <span>??ùå (0.1)</span>
+                                <span>?íÏùå (1.0)</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>?òÏù¥ÏßÄ Î≤îÏúÑ</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="pageRange" value="all" checked>
+                                    <span>?ÑÏ≤¥ ?òÏù¥ÏßÄ</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="pageRange" value="custom">
+                                    <span>Î≤îÏúÑ ÏßÄ??/span>
+                                </label>
+                            </div>
+                            <div id="customRangeInput" class="custom-range hidden">
+                                <input type="text" id="pageRangeInput" placeholder="?? 1-5, 7, 10-12">
+                                <small>?ºÌëúÎ°?Íµ¨Î∂Ñ, ?òÏù¥?àÏúºÎ°?Î≤îÏúÑ ÏßÄ??/small>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label for="scaleSlider">
+                                ?¥ÏÉÅ??Î∞∞Ïú®: <span id="scaleValue">2.0</span>x
+                            </label>
+                            <input type="range" id="scaleSlider" min="1" max="4" step="0.5" value="2">
+                            <div class="slider-labels">
+                                <span>1x (Îπ†Î¶Ñ)</span>
+                                <span>4x (Í≥†Ìï¥?ÅÎèÑ)</span>
+                            </div>
+                        </div>
+
+                        <button type="button" id="convertBtn" class="btn btn-primary">Î≥Ä?òÌïòÍ∏?/button>
+                    </div>
+
+                    <div id="progressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="progressText">0%</span>
+                    </div>
+
+                    <div id="previewArea" class="preview-area hidden">
+                        <h3>ÎØ∏Î¶¨Î≥¥Í∏∞</h3>
+                        <div class="preview-grid">
+                            <div class="preview-item">
+                                <h4>Ï≤??òÏù¥ÏßÄ</h4>
+                                <div class="preview-image-container">
+                                    <img id="firstPagePreview" alt="Ï≤??òÏù¥ÏßÄ ÎØ∏Î¶¨Î≥¥Í∏∞">
+                                </div>
+                            </div>
+                            <div class="preview-item">
+                                <h4>ÎßàÏ?Îß??òÏù¥ÏßÄ</h4>
+                                <div class="preview-image-container">
+                                    <img id="lastPagePreview" alt="ÎßàÏ?Îß??òÏù¥ÏßÄ ÎØ∏Î¶¨Î≥¥Í∏∞">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="downloadSection" class="download-section hidden">
+                        <h3>?§Ïö¥Î°úÎìú</h3>
+                        <div class="download-buttons">
+                            <button type="button" id="downloadZipBtn" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                ZIP?ºÎ°ú ?§Ïö¥Î°úÎìú
+                            </button>
+                            <button type="button" id="downloadIndividualBtn" class="btn btn-secondary">
+                                Í∞úÎ≥Ñ ?§Ïö¥Î°úÎìú
+                            </button>
+                        </div>
+
+                        <div id="individualLinks" class="individual-links hidden">
+                            <h4>?òÏù¥ÏßÄÎ≥??§Ïö¥Î°úÎìú</h4>
+                            <div id="linksList" class="links-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Image Compressor Tool ===== -->
+            <div id="imageCompressorTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">?¥Î?ÏßÄ ?ïÏ∂ï</h2>
+                    <p class="subtitle">JPG/PNG/WEBP ?¥Î?ÏßÄ???¨Í∏∞Î•?Ï§ÑÏûÖ?àÎã§</p>
+
+                    <div id="imgCompressDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>?¥Î?ÏßÄ ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="imgCompressSelectBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="imgCompressFileInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                            <small style="color:#999;">?¨Îü¨ ?åÏùº????Î≤àÏóê ?†ÌÉù?????àÏäµ?àÎã§ (JPG/PNG/WEBP)</small>
+                        </div>
+                    </div>
+
+                    <div id="imgCompressFileListSection" class="hidden">
+                        <div class="merge-list-header">
+                            <h3>?åÏùº Î™©Î°ù (<span id="imgCompressFileCount">0</span>Í∞?</h3>
+                            <button type="button" id="imgCompressAddMoreBtn" class="btn btn-secondary btn-sm">+ ?åÏùº Ï∂îÍ?</button>
+                            <input type="file" id="imgCompressAddMoreInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                        </div>
+                        <div id="imgCompressFileList" class="merge-file-list"></div>
+                    </div>
+
+                    <div id="imgCompressSettingsPanel" class="settings-panel hidden">
+                        <h3>?ïÏ∂ï ?§Ï†ï</h3>
+
+                        <div class="setting-group">
+                            <label>?¥Î?ÏßÄ ?àÏßà</label>
+                            <div class="radio-group compression-levels">
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressQuality" value="0.9">
+                                    <span>ÏµúÏÜå</span>
+                                    <small>?àÏßà 90%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressQuality" value="0.75">
+                                    <span>??ùå</span>
+                                    <small>?àÏßà 75%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressQuality" value="0.6" checked>
+                                    <span>Ï§ëÍ∞Ñ</span>
+                                    <small>?àÏßà 60%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressQuality" value="0.4">
+                                    <span>?íÏùå</span>
+                                    <small>?àÏßà 40%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressQuality" value="0.2">
+                                    <span>ÏµúÎ?</span>
+                                    <small>?àÏßà 20%</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>ÏµúÎ? ?àÎπÑ</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressWidth" value="0" checked>
+                                    <span>?êÎ≥∏ ?†Ï?</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressWidth" value="1920">
+                                    <span>1920px</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressWidth" value="1280">
+                                    <span>1280px</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressWidth" value="800">
+                                    <span>800px</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressWidth" value="400">
+                                    <span>400px</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>Ï∂úÎ†• ?ïÏãù</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressFormat" value="auto" checked>
+                                    <span>?êÎ≥∏ ?†Ï?</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressFormat" value="image/jpeg">
+                                    <span>JPG</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="imgCompressFormat" value="image/webp">
+                                    <span>WEBP</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="compress-tip">
+                            <strong>??</strong> PNG??ÎπÑÏÜê???ïÏãù?¥Îùº ?àÏßà Ï°∞Ï†à ?®Í≥ºÍ∞Ä ?ÅÏäµ?àÎã§. JPG/WEBPÎ°?Î≥Ä???????®Í≥ºÎ•?Î≥????àÏäµ?àÎã§.
+                        </div>
+
+                        <button type="button" id="imgCompressBtn" class="btn btn-primary">?ïÏ∂ï?òÍ∏∞</button>
+                    </div>
+
+                    <div id="imgCompressProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="imgCompressProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="imgCompressProgressText">0%</span>
+                    </div>
+
+                    <div id="imgCompressResultSection" class="result-section hidden">
+                        <h3>?ïÏ∂ï ?ÑÎ£å</h3>
+                        <div class="compression-result">
+                            <div class="result-item">
+                                <span class="result-label">?êÎ≥∏ ?©Í≥Ñ</span>
+                                <span id="imgCompressOriginalTotal" class="result-value"></span>
+                            </div>
+                            <div class="result-arrow">??/div>
+                            <div class="result-item">
+                                <span class="result-label">?ïÏ∂ï ???©Í≥Ñ</span>
+                                <span id="imgCompressCompressedTotal" class="result-value"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">?àÍ∞êÎ•?/span>
+                                <span id="imgCompressSavings" class="result-value savings"></span>
+                            </div>
+                        </div>
+                        <div class="download-buttons" style="margin-bottom:20px;">
+                            <button type="button" id="imgCompressDownloadZipBtn" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                ZIP?ºÎ°ú ?§Ïö¥Î°úÎìú
+                            </button>
+                        </div>
+                        <div class="individual-links">
+                            <h4>Í∞úÎ≥Ñ ?§Ïö¥Î°úÎìú</h4>
+                            <div id="imgCompressResultList" class="links-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PDF Compressor Tool ===== -->
+            <div id="compressorTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">PDF ?ïÏ∂ï</h2>
+                    <p class="subtitle">PDF ?åÏùº ?¨Í∏∞Î•?Ï§ÑÏûÖ?àÎã§</p>
+
+                    <div class="warning-message">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span>?ïÏ∂ï??PDF???¥Î?ÏßÄ Í∏∞Î∞ò?ºÎ°ú Î≥Ä?òÎêò???çÏä§???†ÌÉù??Î∂àÍ??•Ìï©?àÎã§</span>
+                    </div>
+
+                    <div id="compressDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="compressSelectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="compressFileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="compressFileInfo" class="file-info hidden">
+                        <div class="file-details">
+                            <span id="compressFileName"></span>
+                            <span id="compressFileSize"></span>
+                            <span id="compressPageCount"></span>
+                        </div>
+                        <button type="button" id="compressRemoveFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="compressSettingsPanel" class="settings-panel hidden">
+                        <h3>?ïÏ∂ï ?§Ï†ï</h3>
+
+                        <div class="setting-group">
+                            <label for="compressScaleSlider">
+                                ?¥ÏÉÅ??Î∞∞Ïú®: <span id="compressScaleValue">2.25</span>x
+                            </label>
+                            <input type="range" id="compressScaleSlider" min="0.5" max="3" step="0.25" value="2.25">
+                            <div class="slider-labels">
+                                <span>0.5x (?ëÏ? ?åÏùº)</span>
+                                <span>3x (Í≥†ÌíàÏß?</span>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>?¥Î?ÏßÄ ?àÏßà</label>
+                            <div class="radio-group compression-levels">
+                                <label class="radio-label">
+                                    <input type="radio" name="compressionLevel" value="0.9">
+                                    <span>ÏµúÏÜå</span>
+                                    <small>?àÏßà 90%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compressionLevel" value="0.7">
+                                    <span>??ùå</span>
+                                    <small>?àÏßà 70%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compressionLevel" value="0.5">
+                                    <span>Ï§ëÍ∞Ñ</span>
+                                    <small>?àÏßà 50%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compressionLevel" value="0.3">
+                                    <span>?íÏùå</span>
+                                    <small>?àÏßà 30%</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="compressionLevel" value="0.1" checked>
+                                    <span>ÏµúÎ?</span>
+                                    <small>?àÏßà 10%</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="compress-tip">
+                            <strong>??</strong> ?¥ÏÉÅ????+ ?àÏßà ??= ÏµúÎ? ?ïÏ∂ï | ?¥ÏÉÅ????+ ?àÏßà ??= Í≥†ÌíàÏß?
+                        </div>
+
+                        <button type="button" id="compressBtn" class="btn btn-primary">?ïÏ∂ï?òÍ∏∞</button>
+                    </div>
+
+                    <div id="compressProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="compressProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="compressProgressText">0%</span>
+                    </div>
+
+                    <div id="compressResultSection" class="result-section hidden">
+                        <h3>?ïÏ∂ï ?ÑÎ£å</h3>
+                        <div class="compression-result">
+                            <div class="result-item">
+                                <span class="result-label">?êÎ≥∏ ?¨Í∏∞</span>
+                                <span id="originalSize" class="result-value"></span>
+                            </div>
+                            <div class="result-arrow">??/div>
+                            <div class="result-item">
+                                <span class="result-label">?ïÏ∂ï ???¨Í∏∞</span>
+                                <span id="compressedSize" class="result-value"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">?àÍ∞êÎ•?/span>
+                                <span id="savingsPercent" class="result-value savings"></span>
+                            </div>
+                        </div>
+                        <button type="button" id="downloadCompressedBtn" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            ?ïÏ∂ï??PDF ?§Ïö¥Î°úÎìú
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PDF Merger Tool ===== -->
+            <div id="mergerTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">PDF Î≥ëÌï©</h2>
+                    <p class="subtitle">?¨Îü¨ PDF ?åÏùº???òÎÇòÎ°??©Ïπ©?àÎã§</p>
+
+                    <div id="mergeDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº?§ÏùÑ ?¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="mergeSelectFilesBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="mergeFileInput" accept=".pdf" multiple hidden>
+                            <small style="color:#999;">?¨Îü¨ ?åÏùº????Î≤àÏóê ?†ÌÉù?????àÏäµ?àÎã§</small>
+                        </div>
+                    </div>
+
+                    <div id="mergeFileListSection" class="hidden">
+                        <div class="merge-list-header">
+                            <h3>?åÏùº Î™©Î°ù (<span id="mergeFileCount">0</span>Í∞?</h3>
+                            <button type="button" id="mergeAddMoreBtn" class="btn btn-secondary btn-sm">+ ?åÏùº Ï∂îÍ?</button>
+                            <input type="file" id="mergeAddMoreInput" accept=".pdf" multiple hidden>
+                        </div>
+                        <div id="mergeFileList" class="merge-file-list"></div>
+                        <p class="merge-hint">‚¨?‚¨?Î≤ÑÌäº?ºÎ°ú ?åÏùº ?úÏÑúÎ•?Î≥ÄÍ≤ΩÌï† ???àÏäµ?àÎã§</p>
+                        <div class="merge-actions">
+                            <button type="button" id="mergeBtn" class="btn btn-primary">Î≥ëÌï©?òÍ∏∞</button>
+                        </div>
+                    </div>
+
+                    <div id="mergeProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="mergeProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="mergeProgressText">0%</span>
+                    </div>
+
+                    <div id="mergeResultSection" class="result-section hidden">
+                        <h3>Î≥ëÌï© ?ÑÎ£å</h3>
+                        <div class="compression-result">
+                            <div class="result-item">
+                                <span class="result-label">Ï¥??òÏù¥ÏßÄ</span>
+                                <span id="mergeTotalPages" class="result-value"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">?åÏùº ?¨Í∏∞</span>
+                                <span id="mergeTotalSize" class="result-value"></span>
+                            </div>
+                        </div>
+                        <button type="button" id="downloadMergedBtn" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Î≥ëÌï©??PDF ?§Ïö¥Î°úÎìú
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PDF Splitter Tool ===== -->
+            <div id="splitterTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">PDF Î∂ÑÌï†</h2>
+                    <p class="subtitle">PDFÎ•??êÌïò??Í∏∞Ï??ºÎ°ú Î∂ÑÌï†?©Îãà??/p>
+
+                    <div id="splitDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="splitSelectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="splitFileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="splitFileInfo" class="file-info hidden">
+                        <span id="splitFileName"></span>
+                        <span id="splitPageCount"></span>
+                        <button type="button" id="splitRemoveFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="splitSettingsPanel" class="settings-panel hidden">
+                        <h3>Î∂ÑÌï† ?§Ï†ï</h3>
+
+                        <div class="setting-group">
+                            <label>Î∂ÑÌï† Î∞©Ïãù</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="splitType" value="perPage" checked>
+                                    <span>?òÏù¥ÏßÄÎ≥?Î∂ÑÌï†</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="splitType" value="ranges">
+                                    <span>Î≤îÏúÑ ÏßÄ??/span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="splitRangesGroup" class="setting-group hidden">
+                            <label for="splitRangesText">Î∂ÑÌï† Î≤îÏúÑ <small>(Ï§ÑÎãπ ?òÎÇò??Î≤îÏúÑ)</small></label>
+                            <textarea id="splitRangesText" rows="5" placeholder="??&#10;1-3&#10;4-7&#10;8-10&#10;&#10;Í∞?Ï§ÑÏù¥ Î≥ÑÎèÑ??PDF ?åÏùº???©Îãà??></textarea>
+                        </div>
+
+                        <button type="button" id="splitBtn" class="btn btn-primary">Î∂ÑÌï†?òÍ∏∞</button>
+                    </div>
+
+                    <div id="splitProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="splitProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="splitProgressText">0%</span>
+                    </div>
+
+                    <div id="splitResultSection" class="result-section hidden">
+                        <h3>Î∂ÑÌï† ?ÑÎ£å</h3>
+                        <p id="splitResultInfo" class="split-result-info"></p>
+                        <div class="download-buttons" style="margin-bottom:20px;">
+                            <button type="button" id="downloadSplitZipBtn" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                ZIP?ºÎ°ú ?§Ïö¥Î°úÎìú
+                            </button>
+                        </div>
+                        <div class="individual-links">
+                            <h4>Í∞úÎ≥Ñ ?§Ïö¥Î°úÎìú</h4>
+                            <div id="splitLinksList" class="links-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Page Editor Tool ===== -->
+            <div id="pageEditorTool" class="tool-container hidden">
+                <div class="container" style="max-width:1000px;">
+                    <h2 class="tool-title">?òÏù¥ÏßÄ ?∏Ïßë</h2>
+                    <p class="subtitle">?òÏù¥ÏßÄ ?úÏÑú Î≥ÄÍ≤? ??†ú Î∞??ÑÏ≤¥ ÎØ∏Î¶¨Î≥¥Í∏∞</p>
+
+                    <div id="pageEditorDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="pageEditorSelectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="pageEditorFileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="pageEditorFileInfo" class="file-info hidden">
+                        <span id="pageEditorFileName"></span>
+                        <span id="pageEditorPageCount"></span>
+                        <button type="button" id="pageEditorRemoveFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="pageEditorLoading" class="page-editor-loading hidden">
+                        <div class="loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <p>?òÏù¥ÏßÄ ?åÎçîÎß?Ï§?..</p>
+                    </div>
+
+                    <div id="pageEditorPanel" class="hidden">
+                        <div class="page-editor-toolbar">
+                            <div class="editor-hints">
+                                <span class="editor-hint-item">?ñ±Ô∏??úÎûòÍ∑∏Î°ú ?úÏÑú Î≥ÄÍ≤?/span>
+                                <span class="editor-hint-item">???¥Î¶≠?ºÎ°ú ?òÏù¥ÏßÄ ??†ú</span>
+                            </div>
+                            <span id="pageEditorCount" class="page-count-badge"></span>
+                        </div>
+                        <div id="pageGrid" class="page-grid"></div>
+                        <div class="editor-save-section">
+                            <button type="button" id="savePageEditorBtn" class="btn btn-primary">?Ä?•ÌïòÍ∏?/button>
+                        </div>
+                    </div>
+
+                    <div id="pageEditorResultSection" class="result-section hidden">
+                        <h3>?Ä???ÑÎ£å</h3>
+                        <button type="button" id="downloadPageEditorBtn" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            PDF ?§Ïö¥Î°úÎìú
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Metadata Tool ===== -->
+            <div id="metadataTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">PDF Î©îÌ??∞Ïù¥??/h2>
+                    <p class="subtitle">PDF ?åÏùº???ÅÏÑ∏ ?ïÎ≥¥Î•??ïÏù∏?©Îãà??/p>
+
+                    <div id="metaDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="metaSelectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="metaFileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="metaFileInfo" class="file-info hidden">
+                        <span id="metaFileName"></span>
+                        <button type="button" id="metaRemoveFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="metadataPanel" class="hidden">
+                        <h3>Î¨∏ÏÑú ?ïÎ≥¥</h3>
+                        <table class="metadata-table">
+                            <tbody id="metadataTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Watermark Tool ===== -->
+            <div id="watermarkTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">?åÌÑ∞ÎßàÌÅ¨ Ï∂îÍ?</h2>
+                    <p class="subtitle">PDF???çÏä§???êÎäî ?¥Î?ÏßÄ ?åÌÑ∞ÎßàÌÅ¨Î•?Ï∂îÍ??©Îãà??/p>
+
+                    <div id="watermarkDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>PDF ?åÏùº???¨Í∏∞???úÎûòÍ∑∏ÌïòÍ±∞ÎÇò</p>
+                            <button type="button" id="watermarkSelectFileBtn" class="btn btn-secondary">?åÏùº ?†ÌÉù</button>
+                            <input type="file" id="watermarkFileInput" accept=".pdf" hidden>
+                        </div>
+                    </div>
+
+                    <div id="watermarkFileInfo" class="file-info hidden">
+                        <span id="watermarkFileName"></span>
+                        <span id="watermarkPageCount"></span>
+                        <button type="button" id="watermarkRemoveFileBtn" class="btn-icon" title="?åÏùº ?úÍ±∞">&times;</button>
+                    </div>
+
+                    <div id="watermarkSettingsPanel" class="settings-panel hidden">
+                        <h3>?åÌÑ∞ÎßàÌÅ¨ ?§Ï†ï</h3>
+
+                        <div class="setting-group">
+                            <label>?åÌÑ∞ÎßàÌÅ¨ Ï¢ÖÎ•ò</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="watermarkType" value="text" checked>
+                                    <span>?çÏä§??/span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="watermarkType" value="image">
+                                    <span>?¥Î?ÏßÄ</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Text watermark options -->
+                        <div id="textWatermarkOptions">
+                            <div class="setting-group">
+                                <label for="watermarkText">?åÌÑ∞ÎßàÌÅ¨ ?çÏä§??/label>
+                                <input type="text" id="watermarkText" class="text-input" value="CONFIDENTIAL" placeholder="?åÌÑ∞ÎßàÌÅ¨ ?çÏä§???ÖÎ†•">
+                            </div>
+                            <div class="setting-group">
+                                <label>?∞Ìä∏ ?¨Í∏∞: <span id="watermarkFontSizeValue">60</span>pt</label>
+                                <input type="range" id="watermarkFontSize" min="20" max="150" step="5" value="60">
+                                <div class="slider-labels"><span>20pt</span><span>150pt</span></div>
+                            </div>
+                            <div class="setting-group">
+                                <label>?¨Î™Ö?? <span id="watermarkOpacityValue">0.3</span></label>
+                                <input type="range" id="watermarkOpacity" min="0.05" max="1" step="0.05" value="0.3">
+                                <div class="slider-labels"><span>?¨Î™Ö (0.05)</span><span>Î∂àÌà¨Î™?(1.0)</span></div>
+                            </div>
+                            <div class="setting-group">
+                                <label>?åÏ†Ñ Í∞ÅÎèÑ: <span id="watermarkAngleValue">45</span>¬∞</label>
+                                <input type="range" id="watermarkAngle" min="-90" max="90" step="5" value="45">
+                                <div class="slider-labels"><span>-90¬∞</span><span>90¬∞</span></div>
+                            </div>
+                            <div class="setting-group">
+                                <label>?âÏÉÅ</label>
+                                <div class="color-picker-group">
+                                    <label class="color-option">
+                                        <input type="radio" name="watermarkColor" value="gray" checked>
+                                        <span class="color-swatch gray">?åÏÉâ</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="radio" name="watermarkColor" value="red">
+                                        <span class="color-swatch red">Îπ®Í∞ï</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="radio" name="watermarkColor" value="blue">
+                                        <span class="color-swatch blue">?åÎûë</span>
+                                    </label>
+                                    <label class="color-option">
+                                        <input type="radio" name="watermarkColor" value="black">
+                                        <span class="color-swatch black">Í≤Ä??/span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image watermark options -->
+                        <div id="imageWatermarkOptions" class="hidden">
+                            <div class="setting-group">
+                                <label>?åÌÑ∞ÎßàÌÅ¨ ?¥Î?ÏßÄ (PNG/JPG)</label>
+                                <input type="file" id="watermarkImageInput" accept=".png,.jpg,.jpeg" class="file-input-visible">
+                            </div>
+                            <div class="setting-group">
+                                <label>?¨Î™Ö?? <span id="watermarkImgOpacityValue">0.3</span></label>
+                                <input type="range" id="watermarkImgOpacity" min="0.05" max="1" step="0.05" value="0.3">
+                                <div class="slider-labels"><span>?¨Î™Ö</span><span>Î∂àÌà¨Î™?/span></div>
+                            </div>
+                            <div class="setting-group">
+                                <label>?¨Í∏∞: <span id="watermarkImgSizeValue">50</span>%</label>
+                                <input type="range" id="watermarkImgSize" min="10" max="100" step="5" value="50">
+                                <div class="slider-labels"><span>10%</span><span>100%</span></div>
+                            </div>
+                        </div>
+
+                        <button type="button" id="applyWatermarkBtn" class="btn btn-primary">?åÌÑ∞ÎßàÌÅ¨ ?ÅÏö©</button>
+                    </div>
+
+                    <div id="watermarkProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="watermarkProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="watermarkProgressText">0%</span>
+                    </div>
+
+                    <div id="watermarkResultSection" class="result-section hidden">
+                        <h3>?ÅÏö© ?ÑÎ£å</h3>
+                        <button type="button" id="downloadWatermarkedBtn" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            PDF ?§Ïö¥Î°úÎìú
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+
+
+</body>
+</html>
