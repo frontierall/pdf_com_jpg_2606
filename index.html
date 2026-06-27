@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -43,39 +43,39 @@
             </div>
             <nav class="sidebar-nav">
                 <button class="nav-item active" data-tool="converter">
-                    <span class="nav-icon">?��</span>
-                    <span class="nav-text">?��?지 변??/span>
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-text">이미지 변환</span>
                 </button>
                 <button class="nav-item" data-tool="imageCompressor">
-                    <span class="nav-icon">?���?/span>
-                    <span class="nav-text">?��?지 ?�축</span>
+                    <span class="nav-icon">🗜️</span>
+                    <span class="nav-text">이미지 압축</span>
                 </button>
                 <button class="nav-item" data-tool="compressor">
-                    <span class="nav-icon">?��</span>
-                    <span class="nav-text">PDF ?�축</span>
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">PDF 압축</span>
                 </button>
                 <button class="nav-item" data-tool="merger">
-                    <span class="nav-icon">?��</span>
+                    <span class="nav-icon">🔗</span>
                     <span class="nav-text">PDF 병합</span>
                 </button>
                 <button class="nav-item" data-tool="splitter">
-                    <span class="nav-icon">?�️</span>
+                    <span class="nav-icon">✂️</span>
                     <span class="nav-text">PDF 분할</span>
                 </button>
                 <button class="nav-item" data-tool="pageEditor">
-                    <span class="nav-icon">?��</span>
-                    <span class="nav-text">?�이지 ?�집</span>
+                    <span class="nav-icon">🔄</span>
+                    <span class="nav-text">페이지 편집</span>
                 </button>
                 <button class="nav-item" data-tool="metadata">
-                    <span class="nav-icon">?�️</span>
-                    <span class="nav-text">메�??�이??/span>
+                    <span class="nav-icon">ℹ️</span>
+                    <span class="nav-text">메타데이터</span>
                 </button>
                 <button class="nav-item" data-tool="watermark">
-                    <span class="nav-icon">?��</span>
-                    <span class="nav-text">?�터마크</span>
+                    <span class="nav-icon">💧</span>
+                    <span class="nav-text">워터마크</span>
                 </button>
             </nav>
-            <!-- 방문??카운??-->
+            <!-- 방문자 카운터 -->
             <div style="text-align: center; padding: 12px 0; margin-top: auto;">
               <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Ffrontierall.github.io%2Fpdf_com_jpg_2606%2F&label=visitors&labelColor=%23555555&countColor=%234A90D9&style=flat-square"/>
             </div>
@@ -87,7 +87,7 @@
             <div id="converterTool" class="tool-container">
                 <div class="container">
                     <h2 class="tool-title">PDF to Image Converter</h2>
-                    <p class="subtitle">PDF ?�일??JPG/PNG ?��?지�?변?�합?�다</p>
+                    <p class="subtitle">PDF 파일을 JPG/PNG 이미지로 변환합니다</p>
 
                     <div id="dropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -96,8 +96,8 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="selectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="selectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="fileInput" accept=".pdf" hidden>
                         </div>
                     </div>
@@ -105,14 +105,14 @@
                     <div id="fileInfo" class="file-info hidden">
                         <span id="fileName"></span>
                         <span id="pageCount"></span>
-                        <button type="button" id="removeFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="removeFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="settingsPanel" class="settings-panel hidden">
-                        <h3>변???�정</h3>
+                        <h3>변환 설정</h3>
 
                         <div class="setting-group">
-                            <label>?��?지 ?�식</label>
+                            <label>이미지 형식</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="format" value="jpeg" checked>
@@ -127,45 +127,45 @@
 
                         <div class="setting-group" id="qualityGroup">
                             <label for="qualitySlider">
-                                ?��?지 ?�질: <span id="qualityValue">0.9</span>
+                                이미지 품질: <span id="qualityValue">0.9</span>
                             </label>
                             <input type="range" id="qualitySlider" min="0.1" max="1" step="0.1" value="0.9">
                             <div class="slider-labels">
-                                <span>??�� (0.1)</span>
-                                <span>?�음 (1.0)</span>
+                                <span>낮음 (0.1)</span>
+                                <span>높음 (1.0)</span>
                             </div>
                         </div>
 
                         <div class="setting-group">
-                            <label>?�이지 범위</label>
+                            <label>페이지 범위</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="pageRange" value="all" checked>
-                                    <span>?�체 ?�이지</span>
+                                    <span>전체 페이지</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="pageRange" value="custom">
-                                    <span>범위 지??/span>
+                                    <span>범위 지정</span>
                                 </label>
                             </div>
                             <div id="customRangeInput" class="custom-range hidden">
-                                <input type="text" id="pageRangeInput" placeholder="?? 1-5, 7, 10-12">
-                                <small>?�표�?구분, ?�이?�으�?범위 지??/small>
+                                <input type="text" id="pageRangeInput" placeholder="예: 1-5, 7, 10-12">
+                                <small>쉼표로 구분, 하이픈으로 범위 지정</small>
                             </div>
                         </div>
 
                         <div class="setting-group">
                             <label for="scaleSlider">
-                                ?�상??배율: <span id="scaleValue">2.0</span>x
+                                해상도 배율: <span id="scaleValue">2.0</span>x
                             </label>
                             <input type="range" id="scaleSlider" min="1" max="4" step="0.5" value="2">
                             <div class="slider-labels">
                                 <span>1x (빠름)</span>
-                                <span>4x (고해?�도)</span>
+                                <span>4x (고해상도)</span>
                             </div>
                         </div>
 
-                        <button type="button" id="convertBtn" class="btn btn-primary">변?�하�?/button>
+                        <button type="button" id="convertBtn" class="btn btn-primary">변환하기</button>
                     </div>
 
                     <div id="progressContainer" class="progress-container hidden">
@@ -179,22 +179,22 @@
                         <h3>미리보기</h3>
                         <div class="preview-grid">
                             <div class="preview-item">
-                                <h4>�??�이지</h4>
+                                <h4>첫 페이지</h4>
                                 <div class="preview-image-container">
-                                    <img id="firstPagePreview" alt="�??�이지 미리보기">
+                                    <img id="firstPagePreview" alt="첫 페이지 미리보기">
                                 </div>
                             </div>
                             <div class="preview-item">
-                                <h4>마�?�??�이지</h4>
+                                <h4>마지막 페이지</h4>
                                 <div class="preview-image-container">
-                                    <img id="lastPagePreview" alt="마�?�??�이지 미리보기">
+                                    <img id="lastPagePreview" alt="마지막 페이지 미리보기">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div id="downloadSection" class="download-section hidden">
-                        <h3>?�운로드</h3>
+                        <h3>다운로드</h3>
                         <div class="download-buttons">
                             <button type="button" id="downloadZipBtn" class="btn btn-primary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
@@ -202,15 +202,15 @@
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
-                                ZIP?�로 ?�운로드
+                                ZIP으로 다운로드
                             </button>
                             <button type="button" id="downloadIndividualBtn" class="btn btn-secondary">
-                                개별 ?�운로드
+                                개별 다운로드
                             </button>
                         </div>
 
                         <div id="individualLinks" class="individual-links hidden">
-                            <h4>?�이지�??�운로드</h4>
+                            <h4>페이지별 다운로드</h4>
                             <div id="linksList" class="links-list"></div>
                         </div>
                     </div>
@@ -220,8 +220,8 @@
             <!-- ===== Image Compressor Tool ===== -->
             <div id="imageCompressorTool" class="tool-container hidden">
                 <div class="container">
-                    <h2 class="tool-title">?��?지 ?�축</h2>
-                    <p class="subtitle">JPG/PNG/WEBP ?��?지???�기�?줄입?�다</p>
+                    <h2 class="tool-title">이미지 압축</h2>
+                    <p class="subtitle">JPG/PNG/WEBP 이미지의 크기를 줄입니다</p>
 
                     <div id="imgCompressDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -230,62 +230,62 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>?��?지 ?�일???�기???�래그하거나</p>
-                            <button type="button" id="imgCompressSelectBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>이미지 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="imgCompressSelectBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="imgCompressFileInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
-                            <small style="color:#999;">?�러 ?�일????번에 ?�택?????�습?�다 (JPG/PNG/WEBP)</small>
+                            <small style="color:#999;">여러 파일을 한 번에 선택할 수 있습니다 (JPG/PNG/WEBP)</small>
                         </div>
                     </div>
 
                     <div id="imgCompressFileListSection" class="hidden">
                         <div class="merge-list-header">
-                            <h3>?�일 목록 (<span id="imgCompressFileCount">0</span>�?</h3>
-                            <button type="button" id="imgCompressAddMoreBtn" class="btn btn-secondary btn-sm">+ ?�일 추�?</button>
+                            <h3>파일 목록 (<span id="imgCompressFileCount">0</span>개)</h3>
+                            <button type="button" id="imgCompressAddMoreBtn" class="btn btn-secondary btn-sm">+ 파일 추가</button>
                             <input type="file" id="imgCompressAddMoreInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
                         </div>
                         <div id="imgCompressFileList" class="merge-file-list"></div>
                     </div>
 
                     <div id="imgCompressSettingsPanel" class="settings-panel hidden">
-                        <h3>?�축 ?�정</h3>
+                        <h3>압축 설정</h3>
 
                         <div class="setting-group">
-                            <label>?��?지 ?�질</label>
+                            <label>이미지 품질</label>
                             <div class="radio-group compression-levels">
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressQuality" value="0.9">
                                     <span>최소</span>
-                                    <small>?�질 90%</small>
+                                    <small>품질 90%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressQuality" value="0.75">
-                                    <span>??��</span>
-                                    <small>?�질 75%</small>
+                                    <span>낮음</span>
+                                    <small>품질 75%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressQuality" value="0.6" checked>
                                     <span>중간</span>
-                                    <small>?�질 60%</small>
+                                    <small>품질 60%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressQuality" value="0.4">
-                                    <span>?�음</span>
-                                    <small>?�질 40%</small>
+                                    <span>높음</span>
+                                    <small>품질 40%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressQuality" value="0.2">
-                                    <span>최�?</span>
-                                    <small>?�질 20%</small>
+                                    <span>최대</span>
+                                    <small>품질 20%</small>
                                 </label>
                             </div>
                         </div>
 
                         <div class="setting-group">
-                            <label>최�? ?�비</label>
+                            <label>최대 너비</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressWidth" value="0" checked>
-                                    <span>?�본 ?��?</span>
+                                    <span>원본 유지</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressWidth" value="1920">
@@ -307,11 +307,11 @@
                         </div>
 
                         <div class="setting-group">
-                            <label>출력 ?�식</label>
+                            <label>출력 형식</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressFormat" value="auto" checked>
-                                    <span>?�본 ?��?</span>
+                                    <span>원본 유지</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="imgCompressFormat" value="image/jpeg">
@@ -325,10 +325,10 @@
                         </div>
 
                         <div class="compress-tip">
-                            <strong>??</strong> PNG??비손???�식?�라 ?�질 조절 ?�과가 ?�습?�다. JPG/WEBP�?변???????�과�?�????�습?�다.
+                            <strong>팁:</strong> PNG는 비손실 형식이라 품질 조절 효과가 적습니다. JPG/WEBP로 변환 시 큰 효과를 볼 수 있습니다.
                         </div>
 
-                        <button type="button" id="imgCompressBtn" class="btn btn-primary">?�축?�기</button>
+                        <button type="button" id="imgCompressBtn" class="btn btn-primary">압축하기</button>
                     </div>
 
                     <div id="imgCompressProgressContainer" class="progress-container hidden">
@@ -339,19 +339,19 @@
                     </div>
 
                     <div id="imgCompressResultSection" class="result-section hidden">
-                        <h3>?�축 ?�료</h3>
+                        <h3>압축 완료</h3>
                         <div class="compression-result">
                             <div class="result-item">
-                                <span class="result-label">?�본 ?�계</span>
+                                <span class="result-label">원본 합계</span>
                                 <span id="imgCompressOriginalTotal" class="result-value"></span>
                             </div>
-                            <div class="result-arrow">??/div>
+                            <div class="result-arrow">→</div>
                             <div class="result-item">
-                                <span class="result-label">?�축 ???�계</span>
+                                <span class="result-label">압축 후 합계</span>
                                 <span id="imgCompressCompressedTotal" class="result-value"></span>
                             </div>
                             <div class="result-item">
-                                <span class="result-label">?�감�?/span>
+                                <span class="result-label">절감률</span>
                                 <span id="imgCompressSavings" class="result-value savings"></span>
                             </div>
                         </div>
@@ -362,11 +362,11 @@
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
-                                ZIP?�로 ?�운로드
+                                ZIP으로 다운로드
                             </button>
                         </div>
                         <div class="individual-links">
-                            <h4>개별 ?�운로드</h4>
+                            <h4>개별 다운로드</h4>
                             <div id="imgCompressResultList" class="links-list"></div>
                         </div>
                     </div>
@@ -376,8 +376,8 @@
             <!-- ===== PDF Compressor Tool ===== -->
             <div id="compressorTool" class="tool-container hidden">
                 <div class="container">
-                    <h2 class="tool-title">PDF ?�축</h2>
-                    <p class="subtitle">PDF ?�일 ?�기�?줄입?�다</p>
+                    <h2 class="tool-title">PDF 압축</h2>
+                    <p class="subtitle">PDF 파일 크기를 줄입니다</p>
 
                     <div class="warning-message">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
@@ -385,7 +385,7 @@
                             <line x1="12" y1="9" x2="12" y2="13"/>
                             <line x1="12" y1="17" x2="12.01" y2="17"/>
                         </svg>
-                        <span>?�축??PDF???��?지 기반?�로 변?�되???�스???�택??불�??�합?�다</span>
+                        <span>압축된 PDF는 이미지 기반으로 변환되어 텍스트 선택이 불가능합니다</span>
                     </div>
 
                     <div id="compressDropZone" class="drop-zone">
@@ -395,8 +395,8 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="compressSelectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="compressSelectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="compressFileInput" accept=".pdf" hidden>
                         </div>
                     </div>
@@ -407,59 +407,59 @@
                             <span id="compressFileSize"></span>
                             <span id="compressPageCount"></span>
                         </div>
-                        <button type="button" id="compressRemoveFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="compressRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="compressSettingsPanel" class="settings-panel hidden">
-                        <h3>?�축 ?�정</h3>
+                        <h3>압축 설정</h3>
 
                         <div class="setting-group">
                             <label for="compressScaleSlider">
-                                ?�상??배율: <span id="compressScaleValue">2.25</span>x
+                                해상도 배율: <span id="compressScaleValue">1.5</span>x
                             </label>
-                            <input type="range" id="compressScaleSlider" min="0.5" max="3" step="0.25" value="2.25">
+                            <input type="range" id="compressScaleSlider" min="0.5" max="3" step="0.25" value="1.5">
                             <div class="slider-labels">
-                                <span>0.5x (?��? ?�일)</span>
-                                <span>3x (고품�?</span>
+                                <span>0.5x (작은 파일)</span>
+                                <span>3x (고품질)</span>
                             </div>
                         </div>
 
                         <div class="setting-group">
-                            <label>?��?지 ?�질</label>
+                            <label>이미지 품질</label>
                             <div class="radio-group compression-levels">
                                 <label class="radio-label">
                                     <input type="radio" name="compressionLevel" value="0.9">
                                     <span>최소</span>
-                                    <small>?�질 90%</small>
+                                    <small>품질 90%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="compressionLevel" value="0.7">
-                                    <span>??��</span>
-                                    <small>?�질 70%</small>
+                                    <span>낮음</span>
+                                    <small>품질 70%</small>
                                 </label>
                                 <label class="radio-label">
-                                    <input type="radio" name="compressionLevel" value="0.5">
+                                    <input type="radio" name="compressionLevel" value="0.5" checked>
                                     <span>중간</span>
-                                    <small>?�질 50%</small>
+                                    <small>품질 50%</small>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="compressionLevel" value="0.3">
-                                    <span>?�음</span>
-                                    <small>?�질 30%</small>
+                                    <span>높음</span>
+                                    <small>품질 30%</small>
                                 </label>
                                 <label class="radio-label">
-                                    <input type="radio" name="compressionLevel" value="0.1" checked>
-                                    <span>최�?</span>
-                                    <small>?�질 10%</small>
+                                    <input type="radio" name="compressionLevel" value="0.1">
+                                    <span>최대</span>
+                                    <small>품질 10%</small>
                                 </label>
                             </div>
                         </div>
 
                         <div class="compress-tip">
-                            <strong>??</strong> ?�상????+ ?�질 ??= 최�? ?�축 | ?�상????+ ?�질 ??= 고품�?
+                            <strong>팁:</strong> 해상도 ↓ + 품질 ↓ = 최대 압축 | 해상도 ↑ + 품질 ↑ = 고품질
                         </div>
 
-                        <button type="button" id="compressBtn" class="btn btn-primary">?�축?�기</button>
+                        <button type="button" id="compressBtn" class="btn btn-primary">압축하기</button>
                     </div>
 
                     <div id="compressProgressContainer" class="progress-container hidden">
@@ -470,19 +470,19 @@
                     </div>
 
                     <div id="compressResultSection" class="result-section hidden">
-                        <h3>?�축 ?�료</h3>
+                        <h3>압축 완료</h3>
                         <div class="compression-result">
                             <div class="result-item">
-                                <span class="result-label">?�본 ?�기</span>
+                                <span class="result-label">원본 크기</span>
                                 <span id="originalSize" class="result-value"></span>
                             </div>
-                            <div class="result-arrow">??/div>
+                            <div class="result-arrow">→</div>
                             <div class="result-item">
-                                <span class="result-label">?�축 ???�기</span>
+                                <span class="result-label">압축 후 크기</span>
                                 <span id="compressedSize" class="result-value"></span>
                             </div>
                             <div class="result-item">
-                                <span class="result-label">?�감�?/span>
+                                <span class="result-label">절감률</span>
                                 <span id="savingsPercent" class="result-value savings"></span>
                             </div>
                         </div>
@@ -492,7 +492,7 @@
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            ?�축??PDF ?�운로드
+                            압축된 PDF 다운로드
                         </button>
                     </div>
                 </div>
@@ -502,7 +502,7 @@
             <div id="mergerTool" class="tool-container hidden">
                 <div class="container">
                     <h2 class="tool-title">PDF 병합</h2>
-                    <p class="subtitle">?�러 PDF ?�일???�나�??�칩?�다</p>
+                    <p class="subtitle">여러 PDF 파일을 하나로 합칩니다</p>
 
                     <div id="mergeDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -511,23 +511,23 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일?�을 ?�기???�래그하거나</p>
-                            <button type="button" id="mergeSelectFilesBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일들을 여기에 드래그하거나</p>
+                            <button type="button" id="mergeSelectFilesBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="mergeFileInput" accept=".pdf" multiple hidden>
-                            <small style="color:#999;">?�러 ?�일????번에 ?�택?????�습?�다</small>
+                            <small style="color:#999;">여러 파일을 한 번에 선택할 수 있습니다</small>
                         </div>
                     </div>
 
                     <div id="mergeFileListSection" class="hidden">
                         <div class="merge-list-header">
-                            <h3>?�일 목록 (<span id="mergeFileCount">0</span>�?</h3>
-                            <button type="button" id="mergeAddMoreBtn" class="btn btn-secondary btn-sm">+ ?�일 추�?</button>
+                            <h3>파일 목록 (<span id="mergeFileCount">0</span>개)</h3>
+                            <button type="button" id="mergeAddMoreBtn" class="btn btn-secondary btn-sm">+ 파일 추가</button>
                             <input type="file" id="mergeAddMoreInput" accept=".pdf" multiple hidden>
                         </div>
                         <div id="mergeFileList" class="merge-file-list"></div>
-                        <p class="merge-hint">�?�?버튼?�로 ?�일 ?�서�?변경할 ???�습?�다</p>
+                        <p class="merge-hint">⬆ ⬇ 버튼으로 파일 순서를 변경할 수 있습니다</p>
                         <div class="merge-actions">
-                            <button type="button" id="mergeBtn" class="btn btn-primary">병합?�기</button>
+                            <button type="button" id="mergeBtn" class="btn btn-primary">병합하기</button>
                         </div>
                     </div>
 
@@ -539,14 +539,14 @@
                     </div>
 
                     <div id="mergeResultSection" class="result-section hidden">
-                        <h3>병합 ?�료</h3>
+                        <h3>병합 완료</h3>
                         <div class="compression-result">
                             <div class="result-item">
-                                <span class="result-label">�??�이지</span>
+                                <span class="result-label">총 페이지</span>
                                 <span id="mergeTotalPages" class="result-value"></span>
                             </div>
                             <div class="result-item">
-                                <span class="result-label">?�일 ?�기</span>
+                                <span class="result-label">파일 크기</span>
                                 <span id="mergeTotalSize" class="result-value"></span>
                             </div>
                         </div>
@@ -556,7 +556,7 @@
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            병합??PDF ?�운로드
+                            병합된 PDF 다운로드
                         </button>
                     </div>
                 </div>
@@ -566,7 +566,7 @@
             <div id="splitterTool" class="tool-container hidden">
                 <div class="container">
                     <h2 class="tool-title">PDF 분할</h2>
-                    <p class="subtitle">PDF�??�하??기�??�로 분할?�니??/p>
+                    <p class="subtitle">PDF를 원하는 기준으로 분할합니다</p>
 
                     <div id="splitDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -575,8 +575,8 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="splitSelectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="splitSelectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="splitFileInput" accept=".pdf" hidden>
                         </div>
                     </div>
@@ -584,32 +584,32 @@
                     <div id="splitFileInfo" class="file-info hidden">
                         <span id="splitFileName"></span>
                         <span id="splitPageCount"></span>
-                        <button type="button" id="splitRemoveFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="splitRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="splitSettingsPanel" class="settings-panel hidden">
-                        <h3>분할 ?�정</h3>
+                        <h3>분할 설정</h3>
 
                         <div class="setting-group">
                             <label>분할 방식</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="splitType" value="perPage" checked>
-                                    <span>?�이지�?분할</span>
+                                    <span>페이지별 분할</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="splitType" value="ranges">
-                                    <span>범위 지??/span>
+                                    <span>범위 지정</span>
                                 </label>
                             </div>
                         </div>
 
                         <div id="splitRangesGroup" class="setting-group hidden">
-                            <label for="splitRangesText">분할 범위 <small>(줄당 ?�나??범위)</small></label>
-                            <textarea id="splitRangesText" rows="5" placeholder="??&#10;1-3&#10;4-7&#10;8-10&#10;&#10;�?줄이 별도??PDF ?�일???�니??></textarea>
+                            <label for="splitRangesText">분할 범위 <small>(줄당 하나의 범위)</small></label>
+                            <textarea id="splitRangesText" rows="5" placeholder="예:&#10;1-3&#10;4-7&#10;8-10&#10;&#10;각 줄이 별도의 PDF 파일이 됩니다"></textarea>
                         </div>
 
-                        <button type="button" id="splitBtn" class="btn btn-primary">분할?�기</button>
+                        <button type="button" id="splitBtn" class="btn btn-primary">분할하기</button>
                     </div>
 
                     <div id="splitProgressContainer" class="progress-container hidden">
@@ -620,7 +620,7 @@
                     </div>
 
                     <div id="splitResultSection" class="result-section hidden">
-                        <h3>분할 ?�료</h3>
+                        <h3>분할 완료</h3>
                         <p id="splitResultInfo" class="split-result-info"></p>
                         <div class="download-buttons" style="margin-bottom:20px;">
                             <button type="button" id="downloadSplitZipBtn" class="btn btn-primary">
@@ -629,11 +629,11 @@
                                     <polyline points="7 10 12 15 17 10"/>
                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
-                                ZIP?�로 ?�운로드
+                                ZIP으로 다운로드
                             </button>
                         </div>
                         <div class="individual-links">
-                            <h4>개별 ?�운로드</h4>
+                            <h4>개별 다운로드</h4>
                             <div id="splitLinksList" class="links-list"></div>
                         </div>
                     </div>
@@ -643,8 +643,8 @@
             <!-- ===== Page Editor Tool ===== -->
             <div id="pageEditorTool" class="tool-container hidden">
                 <div class="container" style="max-width:1000px;">
-                    <h2 class="tool-title">?�이지 ?�집</h2>
-                    <p class="subtitle">?�이지 ?�서 변�? ??�� �??�체 미리보기</p>
+                    <h2 class="tool-title">페이지 편집</h2>
+                    <p class="subtitle">페이지 순서 변경, 삭제 및 전체 미리보기</p>
 
                     <div id="pageEditorDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -653,8 +653,8 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="pageEditorSelectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="pageEditorSelectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="pageEditorFileInput" accept=".pdf" hidden>
                         </div>
                     </div>
@@ -662,39 +662,39 @@
                     <div id="pageEditorFileInfo" class="file-info hidden">
                         <span id="pageEditorFileName"></span>
                         <span id="pageEditorPageCount"></span>
-                        <button type="button" id="pageEditorRemoveFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="pageEditorRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="pageEditorLoading" class="page-editor-loading hidden">
                         <div class="loading-dots">
                             <span></span><span></span><span></span>
                         </div>
-                        <p>?�이지 ?�더�?�?..</p>
+                        <p>페이지 렌더링 중...</p>
                     </div>
 
                     <div id="pageEditorPanel" class="hidden">
                         <div class="page-editor-toolbar">
                             <div class="editor-hints">
-                                <span class="editor-hint-item">?���??�래그로 ?�서 변�?/span>
-                                <span class="editor-hint-item">???�릭?�로 ?�이지 ??��</span>
+                                <span class="editor-hint-item">🖱️ 드래그로 순서 변경</span>
+                                <span class="editor-hint-item">✕ 클릭으로 페이지 삭제</span>
                             </div>
                             <span id="pageEditorCount" class="page-count-badge"></span>
                         </div>
                         <div id="pageGrid" class="page-grid"></div>
                         <div class="editor-save-section">
-                            <button type="button" id="savePageEditorBtn" class="btn btn-primary">?�?�하�?/button>
+                            <button type="button" id="savePageEditorBtn" class="btn btn-primary">저장하기</button>
                         </div>
                     </div>
 
                     <div id="pageEditorResultSection" class="result-section hidden">
-                        <h3>?�???�료</h3>
+                        <h3>저장 완료</h3>
                         <button type="button" id="downloadPageEditorBtn" class="btn btn-primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            PDF ?�운로드
+                            PDF 다운로드
                         </button>
                     </div>
                 </div>
@@ -703,8 +703,8 @@
             <!-- ===== Metadata Tool ===== -->
             <div id="metadataTool" class="tool-container hidden">
                 <div class="container">
-                    <h2 class="tool-title">PDF 메�??�이??/h2>
-                    <p class="subtitle">PDF ?�일???�세 ?�보�??�인?�니??/p>
+                    <h2 class="tool-title">PDF 메타데이터</h2>
+                    <p class="subtitle">PDF 파일의 상세 정보를 확인합니다</p>
 
                     <div id="metaDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -713,19 +713,19 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="metaSelectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="metaSelectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="metaFileInput" accept=".pdf" hidden>
                         </div>
                     </div>
 
                     <div id="metaFileInfo" class="file-info hidden">
                         <span id="metaFileName"></span>
-                        <button type="button" id="metaRemoveFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="metaRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="metadataPanel" class="hidden">
-                        <h3>문서 ?�보</h3>
+                        <h3>문서 정보</h3>
                         <table class="metadata-table">
                             <tbody id="metadataTableBody"></tbody>
                         </table>
@@ -736,8 +736,8 @@
             <!-- ===== Watermark Tool ===== -->
             <div id="watermarkTool" class="tool-container hidden">
                 <div class="container">
-                    <h2 class="tool-title">?�터마크 추�?</h2>
-                    <p class="subtitle">PDF???�스???�는 ?��?지 ?�터마크�?추�??�니??/p>
+                    <h2 class="tool-title">워터마크 추가</h2>
+                    <p class="subtitle">PDF에 텍스트 또는 이미지 워터마크를 추가합니다</p>
 
                     <div id="watermarkDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -746,8 +746,8 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF ?�일???�기???�래그하거나</p>
-                            <button type="button" id="watermarkSelectFileBtn" class="btn btn-secondary">?�일 ?�택</button>
+                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="watermarkSelectFileBtn" class="btn btn-secondary">파일 선택</button>
                             <input type="file" id="watermarkFileInput" accept=".pdf" hidden>
                         </div>
                     </div>
@@ -755,22 +755,22 @@
                     <div id="watermarkFileInfo" class="file-info hidden">
                         <span id="watermarkFileName"></span>
                         <span id="watermarkPageCount"></span>
-                        <button type="button" id="watermarkRemoveFileBtn" class="btn-icon" title="?�일 ?�거">&times;</button>
+                        <button type="button" id="watermarkRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
                     </div>
 
                     <div id="watermarkSettingsPanel" class="settings-panel hidden">
-                        <h3>?�터마크 ?�정</h3>
+                        <h3>워터마크 설정</h3>
 
                         <div class="setting-group">
-                            <label>?�터마크 종류</label>
+                            <label>워터마크 종류</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="watermarkType" value="text" checked>
-                                    <span>?�스??/span>
+                                    <span>텍스트</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="watermarkType" value="image">
-                                    <span>?��?지</span>
+                                    <span>이미지</span>
                                 </label>
                             </div>
                         </div>
@@ -778,30 +778,30 @@
                         <!-- Text watermark options -->
                         <div id="textWatermarkOptions">
                             <div class="setting-group">
-                                <label for="watermarkText">?�터마크 ?�스??/label>
-                                <input type="text" id="watermarkText" class="text-input" value="CONFIDENTIAL" placeholder="?�터마크 ?�스???�력">
+                                <label for="watermarkText">워터마크 텍스트</label>
+                                <input type="text" id="watermarkText" class="text-input" value="CONFIDENTIAL" placeholder="워터마크 텍스트 입력">
                             </div>
                             <div class="setting-group">
-                                <label>?�트 ?�기: <span id="watermarkFontSizeValue">60</span>pt</label>
+                                <label>폰트 크기: <span id="watermarkFontSizeValue">60</span>pt</label>
                                 <input type="range" id="watermarkFontSize" min="20" max="150" step="5" value="60">
                                 <div class="slider-labels"><span>20pt</span><span>150pt</span></div>
                             </div>
                             <div class="setting-group">
-                                <label>?�명?? <span id="watermarkOpacityValue">0.3</span></label>
+                                <label>투명도: <span id="watermarkOpacityValue">0.3</span></label>
                                 <input type="range" id="watermarkOpacity" min="0.05" max="1" step="0.05" value="0.3">
-                                <div class="slider-labels"><span>?�명 (0.05)</span><span>불투�?(1.0)</span></div>
+                                <div class="slider-labels"><span>투명 (0.05)</span><span>불투명 (1.0)</span></div>
                             </div>
                             <div class="setting-group">
-                                <label>?�전 각도: <span id="watermarkAngleValue">45</span>°</label>
+                                <label>회전 각도: <span id="watermarkAngleValue">45</span>°</label>
                                 <input type="range" id="watermarkAngle" min="-90" max="90" step="5" value="45">
                                 <div class="slider-labels"><span>-90°</span><span>90°</span></div>
                             </div>
                             <div class="setting-group">
-                                <label>?�상</label>
+                                <label>색상</label>
                                 <div class="color-picker-group">
                                     <label class="color-option">
                                         <input type="radio" name="watermarkColor" value="gray" checked>
-                                        <span class="color-swatch gray">?�색</span>
+                                        <span class="color-swatch gray">회색</span>
                                     </label>
                                     <label class="color-option">
                                         <input type="radio" name="watermarkColor" value="red">
@@ -809,11 +809,11 @@
                                     </label>
                                     <label class="color-option">
                                         <input type="radio" name="watermarkColor" value="blue">
-                                        <span class="color-swatch blue">?�랑</span>
+                                        <span class="color-swatch blue">파랑</span>
                                     </label>
                                     <label class="color-option">
                                         <input type="radio" name="watermarkColor" value="black">
-                                        <span class="color-swatch black">검??/span>
+                                        <span class="color-swatch black">검정</span>
                                     </label>
                                 </div>
                             </div>
@@ -822,22 +822,22 @@
                         <!-- Image watermark options -->
                         <div id="imageWatermarkOptions" class="hidden">
                             <div class="setting-group">
-                                <label>?�터마크 ?��?지 (PNG/JPG)</label>
+                                <label>워터마크 이미지 (PNG/JPG)</label>
                                 <input type="file" id="watermarkImageInput" accept=".png,.jpg,.jpeg" class="file-input-visible">
                             </div>
                             <div class="setting-group">
-                                <label>?�명?? <span id="watermarkImgOpacityValue">0.3</span></label>
+                                <label>투명도: <span id="watermarkImgOpacityValue">0.3</span></label>
                                 <input type="range" id="watermarkImgOpacity" min="0.05" max="1" step="0.05" value="0.3">
-                                <div class="slider-labels"><span>?�명</span><span>불투�?/span></div>
+                                <div class="slider-labels"><span>투명</span><span>불투명</span></div>
                             </div>
                             <div class="setting-group">
-                                <label>?�기: <span id="watermarkImgSizeValue">50</span>%</label>
+                                <label>크기: <span id="watermarkImgSizeValue">50</span>%</label>
                                 <input type="range" id="watermarkImgSize" min="10" max="100" step="5" value="50">
                                 <div class="slider-labels"><span>10%</span><span>100%</span></div>
                             </div>
                         </div>
 
-                        <button type="button" id="applyWatermarkBtn" class="btn btn-primary">?�터마크 ?�용</button>
+                        <button type="button" id="applyWatermarkBtn" class="btn btn-primary">워터마크 적용</button>
                     </div>
 
                     <div id="watermarkProgressContainer" class="progress-container hidden">
@@ -848,14 +848,14 @@
                     </div>
 
                     <div id="watermarkResultSection" class="result-section hidden">
-                        <h3>?�용 ?�료</h3>
+                        <h3>적용 완료</h3>
                         <button type="button" id="downloadWatermarkedBtn" class="btn btn-primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            PDF ?�운로드
+                            PDF 다운로드
                         </button>
                     </div>
                 </div>
