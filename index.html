@@ -19,6 +19,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <!-- FileSaver.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- pica (고품질 Lanczos 이미지 리사이즈) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pica/9.0.1/pica.min.js"></script>
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- pdf-lib -->
@@ -45,6 +47,10 @@
                 <button class="nav-item active" data-tool="converter">
                     <span class="nav-icon">📷</span>
                     <span class="nav-text">이미지 변환</span>
+                </button>
+                <button class="nav-item" data-tool="imageUpscaler">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-text">이미지 고해상도</span>
                 </button>
                 <button class="nav-item" data-tool="imageCompressor">
                     <span class="nav-icon">🗜️</span>
@@ -212,6 +218,172 @@
                         <div id="individualLinks" class="individual-links hidden">
                             <h4>페이지별 다운로드</h4>
                             <div id="linksList" class="links-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Image Upscaler Tool ===== -->
+            <div id="imageUpscalerTool" class="tool-container hidden">
+                <div class="container">
+                    <h2 class="tool-title">이미지 고해상도 변환</h2>
+                    <p class="subtitle">JPG/PNG/WEBP 이미지를 브라우저에서 고해상도로 확대합니다</p>
+
+                    <div id="upscaleDropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <p>이미지 파일을 여기에 드래그하거나</p>
+                            <button type="button" id="upscaleSelectBtn" class="btn btn-secondary">파일 선택</button>
+                            <input type="file" id="upscaleFileInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                            <small style="color:#999;">여러 파일을 한 번에 선택할 수 있습니다 (JPG/PNG/WEBP)</small>
+                        </div>
+                    </div>
+
+                    <div id="upscaleFileListSection" class="hidden">
+                        <div class="merge-list-header">
+                            <h3>파일 목록 (<span id="upscaleFileCount">0</span>개)</h3>
+                            <button type="button" id="upscaleAddMoreBtn" class="btn btn-secondary btn-sm">+ 파일 추가</button>
+                            <input type="file" id="upscaleAddMoreInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+                        </div>
+                        <div id="upscaleFileList" class="merge-file-list"></div>
+                    </div>
+
+                    <div id="upscaleSettingsPanel" class="settings-panel hidden">
+                        <h3>변환 설정</h3>
+
+                        <div class="setting-group">
+                            <label>확대 배율</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleScale" value="2" checked>
+                                    <span>2배 (추천)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleScale" value="4">
+                                    <span>4배</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleScale" value="custom">
+                                    <span>직접 입력</span>
+                                </label>
+                            </div>
+                            <div id="upscaleCustomGroup" class="custom-range hidden">
+                                <input type="number" id="upscaleCustomWidth" class="text-input" min="1" max="8192" placeholder="가로 픽셀 입력 (예: 3840)">
+                                <small>세로는 원본 비율에 맞춰 자동 계산됩니다</small>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>보정 프리셋</label>
+                            <div class="radio-group compression-levels">
+                                <label class="radio-label">
+                                    <input type="radio" name="upscalePreset" value="photo" checked>
+                                    <span>사진</span>
+                                    <small>자연스러운 보정</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscalePreset" value="text">
+                                    <span>글자·도표</span>
+                                    <small>윤곽 선명하게</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscalePreset" value="illust">
+                                    <span>일러스트</span>
+                                    <small>중간 보정</small>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscalePreset" value="none">
+                                    <span>보정 없음</span>
+                                    <small>확대만</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label>결과 형식</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleFormat" value="auto" checked>
+                                    <span>원본 유지</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleFormat" value="image/jpeg">
+                                    <span>JPG</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleFormat" value="image/png">
+                                    <span>PNG</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="upscaleFormat" value="image/webp">
+                                    <span>WEBP</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="upscaleBgGroup" class="setting-group hidden">
+                            <label for="upscaleBgColor">JPG 배경색 <small>(투명 PNG를 JPG로 변환할 때 사용)</small></label>
+                            <input type="color" id="upscaleBgColor" value="#ffffff">
+                        </div>
+
+                        <div class="compress-tip">
+                            <strong>팁:</strong> Lanczos 필터로 확대하고 윤곽을 보정합니다. AI 방식이 아니므로 원본에 없는 세부 묘사가 생기지는 않습니다. 최대 크기는 한 변 8192px로 제한됩니다.
+                        </div>
+
+                        <button type="button" id="upscaleBtn" class="btn btn-primary">고해상도로 변환</button>
+                    </div>
+
+                    <div id="upscaleProgressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="upscaleProgressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="upscaleProgressText">0%</span>
+                    </div>
+
+                    <div id="upscaleResultSection" class="result-section hidden">
+                        <h3>변환 완료</h3>
+                        <p id="upscaleResultInfo" class="split-result-info"></p>
+
+                        <div class="upscale-compare">
+                            <div class="compare-header">
+                                <h4>원본 / 변환 결과 비교</h4>
+                                <div class="compare-zoom">
+                                    <button type="button" id="compareZoom100" class="btn btn-secondary btn-sm active">100%</button>
+                                    <button type="button" id="compareZoom200" class="btn btn-secondary btn-sm">200%</button>
+                                </div>
+                            </div>
+                            <div id="compareScroll" class="compare-scroll">
+                                <div id="compareInner" class="compare-inner">
+                                    <img id="compareResultImg" alt="변환 결과">
+                                    <div id="compareOverlay" class="compare-overlay"><img id="compareOrigImg" alt="원본"></div>
+                                    <div id="compareDivider" class="compare-divider"></div>
+                                    <input type="range" id="compareRange" class="compare-range" min="0" max="100" value="50">
+                                </div>
+                            </div>
+                            <div class="compare-labels">
+                                <span>◀ 원본</span>
+                                <span id="compareFileLabel"></span>
+                                <span>변환 결과 ▶</span>
+                            </div>
+                        </div>
+
+                        <div class="download-buttons" style="margin-bottom:20px;">
+                            <button type="button" id="upscaleDownloadZipBtn" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                ZIP으로 다운로드
+                            </button>
+                        </div>
+                        <div class="individual-links">
+                            <h4>개별 다운로드</h4>
+                            <div id="upscaleResultList" class="links-list"></div>
                         </div>
                     </div>
                 </div>

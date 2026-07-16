@@ -16,6 +16,12 @@ let compressPdfFileName = '';
 let compressPdfOriginalSize = 0;
 let compressedPdfBlob = null;
 
+// Image Upscaler
+let upscaleFiles = []; // [{file, name}]
+let upscaleResults = []; // [{name, blob, origW, origH, outW, outH, origUrl, resultUrl, clamped}]
+let upscalePica = null; // pica 인스턴스 (lazy)
+const UPSCALE_MAX_SIDE = 8192; // Canvas 브라우저 한계 대응 최대 한 변 픽셀
+
 // Image Compressor
 let imgCompressFiles = []; // [{file, name}]
 let imgCompressResults = []; // [{name, blob, originalSize, compressedSize}]
@@ -52,6 +58,7 @@ const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 const navItems = document.querySelectorAll('.nav-item');
 const converterTool = document.getElementById('converterTool');
+const imageUpscalerTool = document.getElementById('imageUpscalerTool');
 const imageCompressorTool = document.getElementById('imageCompressorTool');
 const compressorTool = document.getElementById('compressorTool');
 const mergerTool = document.getElementById('mergerTool');
@@ -109,6 +116,38 @@ const imgCompressCompressedTotal = document.getElementById('imgCompressCompresse
 const imgCompressSavings = document.getElementById('imgCompressSavings');
 const imgCompressDownloadZipBtn = document.getElementById('imgCompressDownloadZipBtn');
 const imgCompressResultList = document.getElementById('imgCompressResultList');
+
+// ==================== DOM 요소 - 이미지 고해상도 변환 ====================
+const upscaleDropZone = document.getElementById('upscaleDropZone');
+const upscaleFileInput = document.getElementById('upscaleFileInput');
+const upscaleSelectBtn = document.getElementById('upscaleSelectBtn');
+const upscaleFileListSection = document.getElementById('upscaleFileListSection');
+const upscaleFileCount = document.getElementById('upscaleFileCount');
+const upscaleAddMoreBtn = document.getElementById('upscaleAddMoreBtn');
+const upscaleAddMoreInput = document.getElementById('upscaleAddMoreInput');
+const upscaleFileList = document.getElementById('upscaleFileList');
+const upscaleSettingsPanel = document.getElementById('upscaleSettingsPanel');
+const upscaleCustomGroup = document.getElementById('upscaleCustomGroup');
+const upscaleCustomWidth = document.getElementById('upscaleCustomWidth');
+const upscaleBgGroup = document.getElementById('upscaleBgGroup');
+const upscaleBgColor = document.getElementById('upscaleBgColor');
+const upscaleBtn = document.getElementById('upscaleBtn');
+const upscaleProgressContainer = document.getElementById('upscaleProgressContainer');
+const upscaleProgressFill = document.getElementById('upscaleProgressFill');
+const upscaleProgressText = document.getElementById('upscaleProgressText');
+const upscaleResultSection = document.getElementById('upscaleResultSection');
+const upscaleResultInfo = document.getElementById('upscaleResultInfo');
+const upscaleDownloadZipBtn = document.getElementById('upscaleDownloadZipBtn');
+const upscaleResultList = document.getElementById('upscaleResultList');
+const compareResultImg = document.getElementById('compareResultImg');
+const compareOrigImg = document.getElementById('compareOrigImg');
+const compareOverlay = document.getElementById('compareOverlay');
+const compareDivider = document.getElementById('compareDivider');
+const compareRange = document.getElementById('compareRange');
+const compareInner = document.getElementById('compareInner');
+const compareFileLabel = document.getElementById('compareFileLabel');
+const compareZoom100 = document.getElementById('compareZoom100');
+const compareZoom200 = document.getElementById('compareZoom200');
 
 // ==================== DOM 요소 - PDF 압축 ====================
 const compressDropZone = document.getElementById('compressDropZone');
@@ -253,6 +292,7 @@ function formatPdfDate(dateStr) {
 // ==================== 메뉴 전환 로직 ====================
 const toolMap = {
     converter:       converterTool,
+    imageUpscaler:   imageUpscalerTool,
     imageCompressor: imageCompressorTool,
     compressor:      compressorTool,
     merger:          mergerTool,
@@ -1687,5 +1727,333 @@ async function downloadImgCompressZip() {
     saveAs(blob, 'compressed_images.zip');
 }
 
+// ==================== 이미지 고해상도 변환 기능 ====================
+function getPica() {
+    if (!upscalePica && typeof window.pica === 'function') {
+        upscalePica = window.pica();
+    }
+    return upscalePica;
+}
+
+function addUpscaleFiles(files) {
+    files.forEach(f => upscaleFiles.push({ file: f, name: f.name }));
+    renderUpscaleFileList();
+    upscaleDropZone.classList.add('hidden');
+    upscaleFileListSection.classList.remove('hidden');
+    upscaleSettingsPanel.classList.remove('hidden');
+    hideUpscaleResults();
+}
+
+function renderUpscaleFileList() {
+    upscaleFileCount.textContent = upscaleFiles.length;
+    upscaleFileList.innerHTML = '';
+    upscaleFiles.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'merge-file-item';
+        row.innerHTML = `
+            <span class="merge-file-order">${idx + 1}</span>
+            <span class="merge-file-name">${item.name}</span>
+            <span class="merge-file-pages">${formatFileSize(item.file.size)}</span>
+            <button type="button" class="btn-icon merge-file-remove" data-idx="${idx}" title="제거">&times;</button>
+        `;
+        upscaleFileList.appendChild(row);
+    });
+    upscaleFileList.querySelectorAll('.merge-file-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.idx, 10);
+            upscaleFiles.splice(i, 1);
+            if (upscaleFiles.length === 0) {
+                resetUpscale();
+            } else {
+                renderUpscaleFileList();
+            }
+        });
+    });
+}
+
+function revokeUpscaleUrls() {
+    upscaleResults.forEach(r => {
+        if (r.origUrl) URL.revokeObjectURL(r.origUrl);
+        if (r.resultUrl) URL.revokeObjectURL(r.resultUrl);
+    });
+}
+
+function hideUpscaleResults() {
+    revokeUpscaleUrls();
+    upscaleResults = [];
+    upscaleResultSection.classList.add('hidden');
+    upscaleProgressContainer.classList.add('hidden');
+}
+
+function resetUpscale() {
+    upscaleFiles = [];
+    upscaleDropZone.classList.remove('hidden');
+    upscaleFileListSection.classList.add('hidden');
+    upscaleSettingsPanel.classList.add('hidden');
+    hideUpscaleResults();
+}
+
+function getUpscalePresetParams(preset) {
+    switch (preset) {
+        case 'text':   return { unsharpAmount: 160, unsharpRadius: 0.8, unsharpThreshold: 1 };
+        case 'illust': return { unsharpAmount: 100, unsharpRadius: 0.7, unsharpThreshold: 2 };
+        case 'none':   return { unsharpAmount: 0,   unsharpRadius: 0.5, unsharpThreshold: 0 };
+        case 'photo':
+        default:       return { unsharpAmount: 70,  unsharpRadius: 0.6, unsharpThreshold: 2 };
+    }
+}
+
+// 배율/직접입력 설정으로 출력 크기 계산 (한 변 UPSCALE_MAX_SIDE 초과 시 비율 유지하며 축소)
+function computeUpscaleTarget(img, scaleSetting, customWidth) {
+    const ow = img.naturalWidth;
+    const oh = img.naturalHeight;
+    let targetW, targetH, label;
+
+    if (scaleSetting === 'custom') {
+        targetW = customWidth;
+        targetH = Math.round(oh * (customWidth / ow));
+        label = `${customWidth}px`;
+    } else {
+        const scale = parseFloat(scaleSetting);
+        targetW = Math.round(ow * scale);
+        targetH = Math.round(oh * scale);
+        label = `${scale}x`;
+    }
+
+    let clamped = false;
+    const maxSide = Math.max(targetW, targetH);
+    if (maxSide > UPSCALE_MAX_SIDE) {
+        const ratio = UPSCALE_MAX_SIDE / maxSide;
+        targetW = Math.round(targetW * ratio);
+        targetH = Math.round(targetH * ratio);
+        clamped = true;
+    }
+    targetW = Math.max(1, targetW);
+    targetH = Math.max(1, targetH);
+
+    return { targetW, targetH, label, clamped };
+}
+
+async function upscaleImageToCanvas(img, targetW, targetH, presetParams) {
+    const dst = document.createElement('canvas');
+    dst.width = targetW;
+    dst.height = targetH;
+
+    const p = getPica();
+    if (p) {
+        await p.resize(img, dst, presetParams);
+    } else {
+        // pica CDN 로드 실패 시 브라우저 내장 스무딩으로 폴백
+        const ctx = dst.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, targetW, targetH);
+    }
+    return dst;
+}
+
+// JPG는 알파 채널이 없으므로 배경색 위에 합성
+function flattenCanvas(canvas, bgColor) {
+    const flat = document.createElement('canvas');
+    flat.width = canvas.width;
+    flat.height = canvas.height;
+    const ctx = flat.getContext('2d');
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, flat.width, flat.height);
+    ctx.drawImage(canvas, 0, 0);
+    return flat;
+}
+
+function buildUpscaleName(originalName, outputType, label) {
+    const dot = originalName.lastIndexOf('.');
+    const base = dot >= 0 ? originalName.slice(0, dot) : originalName;
+    const ext = outputType === 'image/jpeg' ? 'jpg'
+              : outputType === 'image/webp' ? 'webp'
+              : 'png';
+    return `${base}_${label}.${ext}`;
+}
+
+async function startImageUpscale() {
+    if (upscaleFiles.length === 0) return;
+
+    const scaleSetting = document.querySelector('input[name="upscaleScale"]:checked').value;
+    const preset = document.querySelector('input[name="upscalePreset"]:checked').value;
+    const formatSetting = document.querySelector('input[name="upscaleFormat"]:checked').value;
+    const bgColor = upscaleBgColor.value;
+
+    let customWidth = 0;
+    if (scaleSetting === 'custom') {
+        customWidth = parseInt(upscaleCustomWidth.value, 10);
+        if (isNaN(customWidth) || customWidth < 1 || customWidth > UPSCALE_MAX_SIDE) {
+            alert(`가로 픽셀을 1 ~ ${UPSCALE_MAX_SIDE} 사이로 입력해주세요.`);
+            return;
+        }
+    }
+
+    const presetParams = getUpscalePresetParams(preset);
+
+    upscaleBtn.disabled = true;
+    upscaleProgressContainer.classList.remove('hidden');
+    upscaleResultSection.classList.add('hidden');
+    revokeUpscaleUrls();
+    upscaleResults = [];
+    upscaleProgressFill.style.width = '0%';
+    upscaleProgressText.textContent = '0%';
+
+    try {
+        for (let i = 0; i < upscaleFiles.length; i++) {
+            const { file, name } = upscaleFiles[i];
+            const img = await loadImageFromFile(file);
+
+            const { targetW, targetH, label, clamped } = computeUpscaleTarget(img, scaleSetting, customWidth);
+            let canvas = await upscaleImageToCanvas(img, targetW, targetH, presetParams);
+
+            const outputType = resolveOutputType(file.type, formatSetting);
+            if (outputType === 'image/jpeg') {
+                canvas = flattenCanvas(canvas, bgColor);
+            }
+
+            const quality = outputType === 'image/png' ? undefined : 0.92;
+            const blob = await canvasToBlob(canvas, outputType, quality);
+
+            upscaleResults.push({
+                name: buildUpscaleName(name, outputType, label),
+                blob,
+                origW: img.naturalWidth,
+                origH: img.naturalHeight,
+                outW: targetW,
+                outH: targetH,
+                origUrl: URL.createObjectURL(file),
+                resultUrl: blob ? URL.createObjectURL(blob) : null,
+                clamped,
+            });
+
+            const pct = Math.round(((i + 1) / upscaleFiles.length) * 100);
+            upscaleProgressFill.style.width = pct + '%';
+            upscaleProgressText.textContent = pct + '%';
+        }
+
+        renderUpscaleResults();
+    } catch (error) {
+        console.error('고해상도 변환 실패:', error);
+        alert('이미지 변환 중 오류가 발생했습니다.');
+    } finally {
+        upscaleBtn.disabled = false;
+    }
+}
+
+function renderUpscaleResults() {
+    const anyClamped = upscaleResults.some(r => r.clamped);
+    upscaleResultInfo.textContent =
+        `${upscaleResults.length}개 파일 변환 완료` +
+        (anyClamped ? ` (일부 파일은 최대 크기 ${UPSCALE_MAX_SIDE}px 제한에 맞춰 조정되었습니다)` : '');
+
+    upscaleResultList.innerHTML = '';
+    upscaleResults.forEach((r, idx) => {
+        const row = document.createElement('div');
+        row.className = 'link-item';
+        row.innerHTML = `
+            <span class="link-name">${r.name}</span>
+            <span class="link-meta">${r.origW}×${r.origH} → ${r.outW}×${r.outH}</span>
+            <button type="button" class="btn btn-secondary btn-sm" data-action="compare" data-idx="${idx}">비교</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-action="download" data-idx="${idx}">다운로드</button>
+        `;
+        upscaleResultList.appendChild(row);
+    });
+    upscaleResultList.querySelectorAll('button[data-idx]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            const r = upscaleResults[idx];
+            if (!r) return;
+            if (btn.dataset.action === 'download') {
+                if (r.blob) saveAs(r.blob, r.name);
+            } else {
+                setCompareTarget(idx);
+                compareInner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    });
+
+    upscaleResultSection.classList.remove('hidden');
+    setCompareTarget(0);
+}
+
+function setCompareTarget(idx) {
+    const r = upscaleResults[idx];
+    if (!r || !r.resultUrl) return;
+    compareResultImg.src = r.resultUrl;
+    compareOrigImg.src = r.origUrl;
+    compareFileLabel.textContent = r.name;
+    compareRange.value = 50;
+    updateComparePosition(50);
+}
+
+function updateComparePosition(v) {
+    compareOverlay.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    compareDivider.style.left = `${v}%`;
+}
+
+function setCompareZoom(percent) {
+    compareInner.style.width = `${percent}%`;
+    compareZoom100.classList.toggle('active', percent === 100);
+    compareZoom200.classList.toggle('active', percent === 200);
+}
+
+async function downloadUpscaleZip() {
+    if (upscaleResults.length === 0) return;
+    const zip = new JSZip();
+    upscaleResults.forEach(r => {
+        if (r.blob) zip.file(r.name, r.blob);
+    });
+    const blob = await zip.generateAsync({ type: 'blob' });
+    saveAs(blob, 'upscaled_images.zip');
+}
+
+function setupUpscaleEventListeners() {
+    upscaleSelectBtn.addEventListener('click', (e) => { e.stopPropagation(); upscaleFileInput.click(); });
+    upscaleDropZone.addEventListener('click', () => upscaleFileInput.click());
+    upscaleFileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files).filter(isImageFile);
+        if (files.length > 0) addUpscaleFiles(files);
+        upscaleFileInput.value = '';
+    });
+
+    upscaleDropZone.addEventListener('dragover', (e) => { e.preventDefault(); upscaleDropZone.classList.add('drag-over'); });
+    upscaleDropZone.addEventListener('dragleave', () => upscaleDropZone.classList.remove('drag-over'));
+    upscaleDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        upscaleDropZone.classList.remove('drag-over');
+        const files = Array.from(e.dataTransfer.files).filter(isImageFile);
+        if (files.length > 0) addUpscaleFiles(files);
+    });
+
+    upscaleAddMoreBtn.addEventListener('click', () => upscaleAddMoreInput.click());
+    upscaleAddMoreInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files).filter(isImageFile);
+        if (files.length > 0) addUpscaleFiles(files);
+        upscaleAddMoreInput.value = '';
+    });
+
+    document.querySelectorAll('input[name="upscaleScale"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            upscaleCustomGroup.classList.toggle('hidden', e.target.value !== 'custom');
+        });
+    });
+
+    document.querySelectorAll('input[name="upscaleFormat"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            upscaleBgGroup.classList.toggle('hidden', e.target.value !== 'image/jpeg');
+        });
+    });
+
+    upscaleBtn.addEventListener('click', startImageUpscale);
+    upscaleDownloadZipBtn.addEventListener('click', downloadUpscaleZip);
+
+    compareRange.addEventListener('input', () => updateComparePosition(parseFloat(compareRange.value)));
+    compareZoom100.addEventListener('click', () => setCompareZoom(100));
+    compareZoom200.addEventListener('click', () => setCompareZoom(200));
+}
+
 // ==================== 초기화 ====================
 setupEventListeners();
+setupUpscaleEventListeners();

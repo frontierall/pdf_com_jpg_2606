@@ -1374,8 +1374,162 @@ textarea[readonly] {
     white-space: nowrap;
 }
 
+/* ===== Image Upscaler Tool ===== */
+#upscaleResultList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 360px;
+    grid-template-columns: none;
+}
+
+#upscaleResultList .link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+#upscaleResultList .link-name {
+    flex: 1;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+}
+
+#upscaleResultList .link-meta {
+    font-size: 0.8rem;
+    color: #667eea;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#upscaleBgGroup input[type="color"] {
+    width: 60px;
+    height: 40px;
+    padding: 2px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
+
+.upscale-compare {
+    margin: 10px 0 25px;
+    text-align: left;
+}
+
+.compare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.compare-header h4 {
+    margin: 0;
+}
+
+.compare-zoom {
+    display: flex;
+    gap: 6px;
+}
+
+.compare-zoom .btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.compare-scroll {
+    overflow: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f0f0f0;
+    max-height: 440px;
+}
+
+.compare-inner {
+    position: relative;
+    width: 100%;
+}
+
+.compare-inner img {
+    width: 100%;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+
+.compare-overlay {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 50% 0 0);
+}
+
+.compare-overlay img {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+}
+
+.compare-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: #667eea;
+    transform: translateX(-50%);
+    pointer-events: none;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.compare-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.compare-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.compare-labels #compareFileLabel {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    color: #667eea;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 @media (max-width: 480px) {
     #imgCompressResultList .link-item {
+        flex-wrap: wrap;
+    }
+
+    #upscaleResultList .link-item {
         flex-wrap: wrap;
     }
 
