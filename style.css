@@ -194,6 +194,41 @@ h4 {
     font-size: 1.1rem;
 }
 
+.conversion-notice {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.conversion-notice div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.conversion-notice small {
+    color: #5b5f7a;
+}
+
+.conversion-spinner {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border: 3px solid #c7d2fe;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: conversion-spin 0.8s linear infinite;
+}
+
+@keyframes conversion-spin {
+    to { transform: rotate(360deg); }
+}
+
 /* Buttons */
 .btn {
     padding: 12px 24px;

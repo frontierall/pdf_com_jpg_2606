@@ -16,3 +16,8 @@ Desktop.ini
 # Temp
 *.tmp
 *.bak
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]

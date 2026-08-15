@@ -1,163 +1,130 @@
 # PDF Tools
 
-PDF·이미지 관련 작업을 브라우저에서 처리할 수 있는 웹 기반 도구 모음입니다. 모든 처리는 클라이언트 측에서 이루어지며 서버로 파일이 전송되지 않습니다.
+PDF와 PowerPoint 문서를 이미지로 변환하고, PDF 편집 및 이미지 최적화 작업을 제공하는 웹 도구입니다.
 
-웹 URL : https://frontierall.github.io/pdf_com_jpg_2606/
+## 주요 기능
 
-## 기능
+- PDF/PPTX를 JPG 또는 PNG로 변환
+- 이미지 고해상도 변환 및 압축
+- PDF 압축, 병합, 분할, 페이지 순서 편집
+- PDF 메타데이터 확인 및 워터마크 적용
+- 변환 이미지 개별 다운로드 또는 ZIP 일괄 다운로드
 
-### 1. 이미지 변환 (PDF → Image)
-- PDF 파일을 JPG/PNG 이미지로 변환
-- 이미지 품질 조절 (0.1 ~ 1.0)
-- 해상도 배율 설정 (1x ~ 4x)
-- 페이지 범위 지정 (전체 또는 특정 페이지)
-- ZIP 일괄 다운로드 / 개별 페이지 다운로드
+## PPTX 변환 방식
 
-### 2. 이미지 압축
-- JPG/PNG/WEBP 이미지 크기 축소 (다중 파일 지원)
-- 5단계 품질 프리셋 (90/75/60/40/20%)
-- 최대 너비 리사이즈 (원본 / 1920 / 1280 / 800 / 400px)
-- 출력 형식 선택 (원본 유지 / JPG 강제 / WEBP 강제)
-- 원본 vs 압축 후 크기 합계 및 절감률 표시
-- 개별 다운로드 / ZIP 일괄 다운로드
+PPTX 파일은 브라우저에서 직접 렌더링하지 않습니다.
 
-### 3. PDF 압축
-- PDF 파일 크기 축소
-- 해상도 배율 설정 (0.5x ~ 3x)
-- 5단계 이미지 품질 (최소/낮음/중간/높음/최대)
-- 원본 및 압축 후 파일 크기 비교, 절감률 표시
+1. 브라우저가 PPTX를 `POST /api/convert/pptx-to-pdf`로 업로드합니다.
+2. FastAPI 서버가 파일 크기와 PPTX 구조를 검증합니다.
+3. LibreOffice Impress가 격리된 임시 프로필에서 PDF로 변환합니다.
+4. 브라우저가 PDF.js로 각 슬라이드를 JPG/PNG로 렌더링합니다.
+5. 사용자는 결과를 개별 이미지 또는 ZIP으로 다운로드합니다.
 
-### 4. PDF 병합
-- 여러 PDF 파일을 하나로 결합
-- 파일 순서 조정 가능
-- 다중 파일 드래그 앤 드롭
+업로드된 원본과 중간 PDF는 요청 처리 후 삭제됩니다. PPTX 업로드 제한은 기본 50MB, 변환 제한 시간은 기본 120초입니다. 애니메이션, 영상 및 전환 효과는 정지된 슬라이드로 출력됩니다.
 
-### 5. PDF 분할
-- 페이지별 분할 또는 범위 지정 분할
-- 결과 PDF를 ZIP 또는 개별 다운로드
+## 로컬 실행
 
-### 6. 페이지 편집
-- 페이지 썸네일 그리드 미리보기
-- 드래그로 순서 변경, 개별 페이지 삭제
-- 편집된 PDF 저장
+### Docker 사용
 
-### 7. 메타데이터
-- PDF 문서 속성 확인 (제목, 작성자, 생성일 등)
+Docker 이미지에는 LibreOffice, Pretendard 정적 TTF 9종과 Noto CJK 대체 글꼴이 포함됩니다.
 
-### 8. 워터마크
-- 텍스트 또는 이미지 워터마크 추가
-- 폰트 크기, 투명도, 회전 각도, 색상 조정
-
-## 사용 방법
-
-1. 브라우저에서 `index.html` 파일 열기
-2. 왼쪽 사이드바에서 원하는 도구 선택
-3. PDF 파일을 드래그 앤 드롭하거나 파일 선택 버튼 클릭
-4. 설정 조절 후 변환/압축 버튼 클릭
-5. 완료 후 다운로드
-
-## 사용 기술
-
-- **PDF.js** - PDF 파일 렌더링
-- **jsPDF** - PDF 파일 생성 (압축용)
-- **pdf-lib** - PDF 병합/분할/페이지 편집/워터마크 등 편집 작업
-- **Canvas API** - 이미지 압축 및 리사이즈 (브라우저 내장)
-- **JSZip** - ZIP 파일 생성
-- **FileSaver.js** - 파일 다운로드
-
-## 파일 구조
-
-```
-pdf_com_jpg_2606/
-├── index.html    # 메인 HTML 파일
-├── style.css     # 스타일시트
-├── script.js     # JavaScript 로직
-├── .gitignore    # Git 제외 파일 목록
-└── README.md     # 프로젝트 설명
+```bash
+docker build -t pdf-tools .
+docker run --rm -p 8000:8000 pdf-tools
 ```
 
----
+브라우저에서 <http://localhost:8000>을 엽니다.
+
+### Python으로 실행
+
+Python 3.11 이상과 LibreOffice가 필요합니다. Windows에서는 Pretendard가 사용자 글꼴로 설치되어 있어야 합니다.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn server:app --host 127.0.0.1 --port 8000
+```
+
+LibreOffice가 PATH에 없다면 실행 파일을 지정합니다.
+
+```powershell
+$env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.exe'
+```
+
+## 배포
+
+### Docker/Render 통합 배포
+
+`render.yaml` 또는 `Dockerfile`로 앱과 변환 API를 함께 배포하면 별도 프런트 설정이 필요 없습니다. 상태 확인 주소는 `/api/health`입니다.
+
+### GitHub Pages 프런트 사용
+
+GitHub Pages는 LibreOffice를 실행할 수 없으므로 PPTX 변환 API를 별도 Docker 서버에 배포해야 합니다. `config.js`에서 API 주소를 지정하고, 서버의 `ALLOWED_ORIGINS`에 GitHub Pages 주소를 등록합니다.
+
+```javascript
+window.PPTX_CONVERTER_API_URL = 'https://your-api.example.com';
+```
+
+```text
+ALLOWED_ORIGINS=https://frontierall.github.io
+```
+
+PDF 및 이미지 브라우저 기능은 기존 GitHub Pages에서도 계속 동작합니다.
+
+## 환경 변수
+
+| 이름 | 기본값 | 설명 |
+| --- | ---: | --- |
+| `LIBREOFFICE_PATH` | 자동 탐색 | LibreOffice/soffice 실행 파일 |
+| `MAX_PPTX_UPLOAD_BYTES` | `52428800` | PPTX 최대 업로드 크기 |
+| `PPTX_CONVERSION_TIMEOUT_SECONDS` | `120` | LibreOffice 변환 제한 시간 |
+| `ALLOWED_ORIGINS` | 없음 | 쉼표로 구분한 CORS 허용 출처 |
+
+## 테스트
+
+```powershell
+python -m unittest discover -s tests -v
+node --check script.js
+```
+
+## 기술 구성
+
+- PDF.js, pdf-lib, jsPDF
+- Canvas API, pica
+- JSZip, FileSaver.js
+- FastAPI, Uvicorn
+- LibreOffice Impress
+- Docker
+
+## 프로젝트 구조
+
+```text
+.
+├── index.html
+├── style.css
+├── script.js
+├── config.js
+├── server.py
+├── requirements.txt
+├── Dockerfile
+├── render.yaml
+└── tests/
+```
 
 ## 버전 기록
 
+### v4.0.0 (2026-08-15)
+
+- PPTX 업로드 및 이미지 변환 추가
+- LibreOffice 기반 PPTX → PDF 서버 변환 추가
+- Pretendard 포함 Docker 런타임과 Render 배포 설정 추가
+- 파일 크기·PPTX 구조·변환 시간 검증 추가
+- PPTX 변환 진행 상태와 오류 안내 추가
+
 ### v3.1.0 (2026-06-28)
-**GitHub Pages 배포 및 방문자 카운터 업데이트**
 
-#### 변경 사항
-- GitHub Pages 배포: `frontierall.github.io/pdf_com_jpg_2606`
-- 방문자 카운터 URL을 새 배포 주소로 변경 (카운트 초기화)
-- Git 저장소 초기화 및 `.gitignore` 추가
-
----
-
-### v3.0.0 (2026-05-13)
-**이미지 압축 도구 추가**
-
-#### 새로운 기능
-- 이미지 압축 도구 (사이드바: 이미지 변환 바로 아래)
-  - JPG/PNG/WEBP 다중 파일 업로드 (드래그 앤 드롭 지원)
-  - 5단계 품질 프리셋 (90/75/60/40/20%)
-  - 최대 너비 리사이즈 옵션 (원본 / 1920 / 1280 / 800 / 400px)
-  - 출력 형식 선택 (원본 유지 / JPG 강제 / WEBP 강제)
-  - Canvas API 기반 — 추가 라이브러리 없이 클라이언트단 처리
-  - 원본 vs 압축 후 합계 및 절감률 표시
-  - 개별 다운로드 또는 ZIP 일괄 다운로드
-
-#### 참고
-- PNG는 비손실 형식이라 품질 슬라이더 효과가 제한적입니다. JPG/WEBP로 변환 시 압축률이 크게 향상됩니다.
-
----
-
-### v2.0.0 (2026-03-05)
-**주요 업데이트: 사이드바 메뉴 + PDF 압축 기능 추가**
-
-#### 새로운 기능
-- 사이드바 메뉴 UI 추가
-  - 왼쪽 고정 사이드바 (200px)
-  - 도구 전환 기능 (이미지 변환 / PDF 압축)
-  - 현재 선택 메뉴 하이라이트
-- 모바일 반응형 디자인
-  - 햄버거 메뉴 버튼
-  - 오버레이가 있는 슬라이드 메뉴
-  - 메뉴 선택 시 자동 닫힘
-- PDF 압축 기능
-  - PDF.js로 렌더링 → Canvas → jsPDF로 재생성
-  - 해상도 배율 설정 (0.5x ~ 3x)
-  - 5단계 이미지 품질 (최소 90% / 낮음 70% / 중간 50% / 높음 30% / 최대 10%)
-  - 원본 파일 크기 표시
-  - 압축 진행률 표시
-  - 압축 결과 (원본/압축 크기, 절감률)
-  - 압축된 PDF 다운로드
-
-#### 변경 사항
-- 레이아웃 구조 변경 (`app-container` > `sidebar` + `main-content`)
-- 타이틀 변경: "PDF to Image Converter" → "PDF Tools"
-- jsPDF CDN 추가
-
-#### 참고
-- 압축된 PDF는 이미지 기반으로 변환되어 텍스트 선택이 불가능합니다
-
----
-
-### v1.0.0 (최초 버전)
-**PDF to Image Converter 출시**
-
-#### 기능
-- PDF 파일을 JPG/PNG 이미지로 변환
-- 드래그 앤 드롭 파일 업로드
-- 이미지 형식 선택 (JPG/PNG)
-- 이미지 품질 조절 (JPG만 해당)
-- 해상도 배율 설정 (1x ~ 4x)
-- 페이지 범위 지정
-  - 전체 페이지
-  - 범위 지정 (예: 1-5, 7, 10-12)
-- 변환 진행률 표시
-- 첫/마지막 페이지 미리보기
-- 다운로드 옵션
-  - ZIP 파일로 일괄 다운로드
-  - 개별 페이지 다운로드
-
----
+- GitHub Pages 배포 및 방문자 카운터 주소 갱신
 
 ## 라이선스
 

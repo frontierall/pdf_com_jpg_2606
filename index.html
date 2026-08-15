@@ -92,8 +92,8 @@
             <!-- ===== Image Converter Tool ===== -->
             <div id="converterTool" class="tool-container">
                 <div class="container">
-                    <h2 class="tool-title">PDF to Image Converter</h2>
-                    <p class="subtitle">PDF 파일을 JPG/PNG 이미지로 변환합니다</p>
+                    <h2 class="tool-title">PDF/PPTX to Image Converter</h2>
+                    <p class="subtitle">PDF 또는 PowerPoint 파일을 JPG/PNG 이미지로 변환합니다</p>
 
                     <div id="dropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -102,9 +102,17 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <p>PDF/PPTX 파일을 여기에 드래그하거나</p>
                             <button type="button" id="selectFileBtn" class="btn btn-secondary">파일 선택</button>
-                            <input type="file" id="fileInput" accept=".pdf" hidden>
+                            <input type="file" id="fileInput" accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation" hidden>
+                        </div>
+                    </div>
+
+                    <div id="documentConversionNotice" class="conversion-notice hidden" role="status" aria-live="polite">
+                        <span class="conversion-spinner" aria-hidden="true"></span>
+                        <div>
+                            <strong>PPTX를 PDF로 변환하고 있습니다.</strong>
+                            <small>슬라이드 수와 파일 크기에 따라 시간이 걸릴 수 있습니다.</small>
                         </div>
                     </div>
 
@@ -1036,6 +1044,7 @@
         </main>
     </div>
 
+    <script src="config.js"></script>
     <script src="script.js"></script>
 
 

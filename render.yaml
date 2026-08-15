@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: pdf-tools
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: MAX_PPTX_UPLOAD_BYTES
+        value: "52428800"
+      - key: PPTX_CONVERSION_TIMEOUT_SECONDS
+        value: "120"

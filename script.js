@@ -9,6 +9,8 @@ const { jsPDF } = window.jspdf;
 let pdfDocument = null;
 let convertedImages = [];
 let pdfFileName = '';
+let documentConversionController = null;
+const MAX_PPTX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
 // PDF Compressor
 let compressPdfDocument = null;
@@ -95,6 +97,7 @@ const downloadZipBtn = document.getElementById('downloadZipBtn');
 const downloadIndividualBtn = document.getElementById('downloadIndividualBtn');
 const individualLinks = document.getElementById('individualLinks');
 const linksList = document.getElementById('linksList');
+const documentConversionNotice = document.getElementById('documentConversionNotice');
 
 // ==================== DOM 요소 - 이미지 압축 ====================
 const imgCompressDropZone = document.getElementById('imgCompressDropZone');
@@ -357,7 +360,7 @@ function setupEventListeners() {
         e.preventDefault();
         dropZone.classList.remove('drag-over');
         const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type === 'application/pdf') loadPDF(files[0]);
+        if (files.length > 0) loadDocument(files[0]);
     });
 
     removeFileBtn.addEventListener('click', resetAll);
@@ -554,16 +557,88 @@ function setupEventListeners() {
 // ==================== 이미지 변환 기능 ====================
 function handleFileSelect(e) {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') loadPDF(file);
+    if (file) loadDocument(file);
 }
 
-async function loadPDF(file) {
+function getDocumentExtension(filename) {
+    const match = filename.toLowerCase().match(/\.(pdf|pptx)$/);
+    return match ? match[1] : '';
+}
+
+function getPptxConversionEndpoint() {
+    const baseUrl = String(window.PPTX_CONVERTER_API_URL || '').replace(/\/$/, '');
+    return `${baseUrl}/api/convert/pptx-to-pdf`;
+}
+
+async function readApiError(response) {
     try {
-        pdfFileName = file.name.replace('.pdf', '');
-        const arrayBuffer = await file.arrayBuffer();
+        const body = await response.json();
+        return body.detail || `서버 오류 (${response.status})`;
+    } catch (_error) {
+        return `서버 오류 (${response.status})`;
+    }
+}
+
+async function loadDocument(file) {
+    const extension = getDocumentExtension(file.name);
+    if (!extension) {
+        alert('PDF 또는 PPTX 파일을 선택해주세요.');
+        fileInput.value = '';
+        return;
+    }
+
+    if (extension === 'pdf') {
+        await loadPDFData(await file.arrayBuffer(), file.name, file.name.replace(/\.pdf$/i, ''));
+        return;
+    }
+
+    if (file.size > MAX_PPTX_UPLOAD_BYTES) {
+        alert('PPTX 파일은 최대 50MB까지 업로드할 수 있습니다.');
+        fileInput.value = '';
+        return;
+    }
+
+    documentConversionController?.abort();
+    documentConversionController = new AbortController();
+    const timeoutId = setTimeout(() => documentConversionController.abort(), 130000);
+    documentConversionNotice.classList.remove('hidden');
+    dropZone.classList.add('hidden');
+    selectFileBtn.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        const response = await fetch(getPptxConversionEndpoint(), {
+            method: 'POST',
+            body: formData,
+            signal: documentConversionController.signal,
+        });
+        if (!response.ok) throw new Error(await readApiError(response));
+
+        const pdfData = await response.arrayBuffer();
+        await loadPDFData(pdfData, `${file.name} (PDF 변환 완료)`, file.name.replace(/\.pptx$/i, ''));
+    } catch (error) {
+        console.error('PPTX 변환 실패:', error);
+        const message = error.name === 'AbortError'
+            ? 'PPTX 변환 시간이 초과되었거나 취소되었습니다.'
+            : error.message;
+        alert(`PPTX 파일을 변환하지 못했습니다.\n${message}`);
+        dropZone.classList.remove('hidden');
+        fileInput.value = '';
+    } finally {
+        clearTimeout(timeoutId);
+        documentConversionController = null;
+        documentConversionNotice.classList.add('hidden');
+        selectFileBtn.disabled = false;
+    }
+}
+
+async function loadPDFData(arrayBuffer, displayName, baseName) {
+    try {
+        pdfFileName = baseName;
         pdfDocument = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-        fileName.textContent = file.name;
+        fileName.textContent = displayName;
         pageCount.textContent = `${pdfDocument.numPages} 페이지`;
 
         dropZone.classList.add('hidden');
@@ -578,12 +653,15 @@ async function loadPDF(file) {
 }
 
 function resetAll() {
+    documentConversionController?.abort();
+    documentConversionController = null;
     pdfDocument = null;
     convertedImages = [];
     pdfFileName = '';
     fileInput.value = '';
 
     dropZone.classList.remove('hidden');
+    documentConversionNotice.classList.add('hidden');
     fileInfo.classList.add('hidden');
     settingsPanel.classList.add('hidden');
 
