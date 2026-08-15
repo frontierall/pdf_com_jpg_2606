@@ -54,6 +54,8 @@ $env:LIBREOFFICE_PATH = 'C:\Program Files\LibreOffice\program\soffice.exe'
 
 ## 배포
 
+> **후속 작업:** 실제 Render 배포와 GitHub Pages 연결은 아직 수행하지 않았습니다. 다음 작업 시 반드시 [PPTX 변환 서비스 배포 체크리스트](docs/deployment-todo.md)를 기준으로 진행하세요.
+
 ### Docker/Render 통합 배포
 
 `render.yaml` 또는 `Dockerfile`로 앱과 변환 API를 함께 배포하면 별도 프런트 설정이 필요 없습니다. 상태 확인 주소는 `/api/health`입니다.
