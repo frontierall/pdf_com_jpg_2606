@@ -84,6 +84,8 @@ const nlGenerateBtn = document.getElementById('nlGenerateBtn');
 const nlOutput = document.getElementById('nlOutput');
 const nlCopyBtn = document.getElementById('nlCopyBtn');
 const nlCopyStatus = document.getElementById('nlCopyStatus');
+const nlPreviewPanel = document.getElementById('nlPreviewPanel');
+const nlPreviewLinks = document.getElementById('nlPreviewLinks');
 
 // ==================== DOM 요소 - 이미지 변환 ====================
 const dropZone = document.getElementById('dropZone');
@@ -361,6 +363,35 @@ function checkAdminHash() {
     }
 }
 
+const NL_SECTION_LABELS = [
+    '표지', '선교지 이야기', '국내', '동아시아', '남아시아', '중동',
+    '아프리카', '유라시아,미주, 오세아니아', '질병중에 있는 선교사',
+    '선교기관 기도제목', 'ON편지 안내 및 활용법',
+];
+
+function renderNewsletterPreviewLinks(base, pages) {
+    nlPreviewLinks.innerHTML = '';
+    NL_SECTION_LABELS.forEach((label, i) => {
+        const url = `${base}#page=${pages[i]}`;
+        const item = document.createElement('div');
+        item.className = 'nl-preview-item';
+
+        const name = document.createElement('span');
+        name.textContent = `${label} (p.${pages[i]})`;
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = '새 탭에서 열기 →';
+
+        item.appendChild(name);
+        item.appendChild(link);
+        nlPreviewLinks.appendChild(item);
+    });
+    nlPreviewPanel.classList.remove('hidden');
+}
+
 function generateNewsletterText() {
     const base = nlBaseUrl.value.trim().split('#')[0];
     const pages = [nlPage1, nlPage2, nlPage3, nlPage4, nlPage5, nlPage6, nlPage7, nlPage8, nlPage9, nlPage10, nlPage11]
@@ -382,6 +413,7 @@ function generateNewsletterText() {
     ];
 
     nlOutput.value = blocks.join('\n\n');
+    renderNewsletterPreviewLinks(base, pages);
 }
 
 function setupNewsletterLinksTool() {
