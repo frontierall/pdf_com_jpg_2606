@@ -66,6 +66,24 @@ const splitterTool = document.getElementById('splitterTool');
 const pageEditorTool = document.getElementById('pageEditorTool');
 const metadataTool = document.getElementById('metadataTool');
 const watermarkTool = document.getElementById('watermarkTool');
+const newsletterLinksTool = document.getElementById('newsletterLinksTool');
+const newsletterNavItem = document.getElementById('newsletterNavItem');
+const nlBaseUrl = document.getElementById('nlBaseUrl');
+const nlPage1 = document.getElementById('nlPage1');
+const nlPage2 = document.getElementById('nlPage2');
+const nlPage3 = document.getElementById('nlPage3');
+const nlPage4 = document.getElementById('nlPage4');
+const nlPage5 = document.getElementById('nlPage5');
+const nlPage6 = document.getElementById('nlPage6');
+const nlPage7 = document.getElementById('nlPage7');
+const nlPage8 = document.getElementById('nlPage8');
+const nlPage9 = document.getElementById('nlPage9');
+const nlPage10 = document.getElementById('nlPage10');
+const nlPage11 = document.getElementById('nlPage11');
+const nlGenerateBtn = document.getElementById('nlGenerateBtn');
+const nlOutput = document.getElementById('nlOutput');
+const nlCopyBtn = document.getElementById('nlCopyBtn');
+const nlCopyStatus = document.getElementById('nlCopyStatus');
 
 // ==================== DOM 요소 - 이미지 변환 ====================
 const dropZone = document.getElementById('dropZone');
@@ -300,6 +318,7 @@ const toolMap = {
     pageEditor:      pageEditorTool,
     metadata:        metadataTool,
     watermark:       watermarkTool,
+    newsletterLinks: newsletterLinksTool,
 };
 
 function switchTool(toolName) {
@@ -333,6 +352,50 @@ function toggleMobileMenu() {
     } else {
         openMobileMenu();
     }
+}
+
+// ==================== 관리자 메뉴 (숨김) ====================
+function checkAdminHash() {
+    if (location.hash === '#mission') {
+        newsletterNavItem.classList.remove('hidden');
+    }
+}
+
+function generateNewsletterText() {
+    const base = nlBaseUrl.value.trim().split('#')[0];
+    const pages = [nlPage1, nlPage2, nlPage3, nlPage4, nlPage5, nlPage6, nlPage7, nlPage8, nlPage9, nlPage10, nlPage11]
+        .map(el => el.value.trim());
+
+    const blocks = [
+        `${base}#page=${pages[0]}`,
+        `선교지 이야기\n(소제목을 입력하세요)\n${base}#page=${pages[1]}`,
+        `국내\n${base}#page=${pages[2]}`,
+        `동아시아\n${base}#page=${pages[3]}`,
+        `남아시아\n${base}#page=${pages[4]}`,
+        `중동\n${base}#page=${pages[5]}`,
+        `아프리카\n${base}#page=${pages[6]}`,
+        `유라시아,미주, 오세아니아\n${base}#page=${pages[7]}`,
+        `질병중에 있는 선교사\n${base}#page=${pages[8]}`,
+        `선교기관 기도제목\n${base}#page=${pages[9]}`,
+        `ON편지 안내 및 활용법\n${base}#page=${pages[10]}`,
+        `미리보내기\nnadi122@naver.com, frontier1020@naver.com`,
+    ];
+
+    nlOutput.value = blocks.join('\n\n');
+}
+
+function setupNewsletterLinksTool() {
+    nlGenerateBtn.addEventListener('click', generateNewsletterText);
+    nlCopyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(nlOutput.value);
+        } catch (e) {
+            nlOutput.select();
+            document.execCommand('copy');
+        }
+        nlCopyStatus.textContent = '복사됨!';
+        setTimeout(() => { nlCopyStatus.textContent = ''; }, 1500);
+    });
 }
 
 // ==================== 이벤트 리스너 설정 ====================
@@ -2057,3 +2120,6 @@ function setupUpscaleEventListeners() {
 // ==================== 초기화 ====================
 setupEventListeners();
 setupUpscaleEventListeners();
+setupNewsletterLinksTool();
+checkAdminHash();
+window.addEventListener('hashchange', checkAdminHash);
