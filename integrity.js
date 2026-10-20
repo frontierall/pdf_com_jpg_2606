@@ -296,8 +296,8 @@ async function findLowResPages(pdfDoc, onProgress, isCancelled) {
         const files = [...fileList].filter(f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name));
         if (files.length) run(files);
     }
-    selectBtn.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('click', (e) => { if (e.target === dropZone) fileInput.click(); });
+    // 드롭존 어디를 눌러도 선택창이 열린다. 버튼은 이벤트가 위로 전달되어 한 번만 열린다.
+    dropZone.addEventListener('click', (e) => { if (e.target !== fileInput) fileInput.click(); });
     fileInput.addEventListener('change', (e) => { pick(e.target.files); fileInput.value = ''; });
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
