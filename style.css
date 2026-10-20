@@ -1613,3 +1613,13 @@ textarea[readonly] {
 .integrity-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
 .integrity-item { text-align: center; font-size: 13px; }
 .integrity-item img { display: block; max-width: 140px; border: 2px solid #e53935; border-radius: 4px; margin-bottom: 4px; }
+
+.check-option { display: block; margin: 12px 0 4px; font-size: 13px; color: #555; }
+#checkResults .integrity-check { margin-bottom: 14px; }
+.check-file-title { margin: 0 0 6px; font-size: 15px; word-break: break-all; }
+.integrity-item img { cursor: zoom-in; }
+.integrity-check .bad-cell { color: #c62828; font-weight: 600; }
+.check-modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 1000; overflow: auto; text-align: center; padding: 16px; cursor: zoom-out; }
+.check-modal.hidden { display: none; }
+.check-modal canvas { max-width: 100%; background: #fff; }
+.check-modal-title, .check-modal-hint { color: #fff; font-size: 13px; margin: 6px 0; }

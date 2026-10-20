@@ -917,7 +917,7 @@
             <div id="checkerTool" class="tool-container hidden">
                 <div class="container">
                     <h2 class="tool-title">PDF 점검</h2>
-                    <p class="subtitle">PDF에 깨진 쪽이 있는지, 쪽수·용량·쪽 크기가 정상인지 점검합니다</p>
+                    <p class="subtitle">PDF에 깨진 쪽이 있는지, 쪽수·용량·쪽 크기가 정상인지 점검합니다 (여러 파일 가능)</p>
 
                     <div id="checkDropZone" class="drop-zone">
                         <div class="drop-zone-content">
@@ -926,27 +926,25 @@
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <p>PDF 파일을 여기에 드래그하거나</p>
+                            <p>PDF 파일을 여기에 드래그하거나 (여러 개 가능)</p>
                             <button type="button" id="checkSelectFileBtn" class="btn btn-secondary">파일 선택</button>
-                            <input type="file" id="checkFileInput" accept=".pdf" hidden>
+                            <input type="file" id="checkFileInput" accept=".pdf" multiple hidden>
                         </div>
                     </div>
 
-                    <div id="checkFileInfo" class="file-info hidden">
-                        <span id="checkFileName"></span>
-                        <button type="button" id="checkRemoveFileBtn" class="btn-icon" title="파일 제거">&times;</button>
-                    </div>
+                    <label class="check-option"><input type="checkbox" id="checkLowResOpt"> 저해상도 이미지도 점검 (느림, 참고용)</label>
+                    <button type="button" id="checkClearBtn" class="btn btn-secondary hidden">결과 지우기</button>
 
-                    <div id="checkPanel" class="integrity-check hidden">
-                        <div id="checkStatus" class="integrity-status"></div>
-                        <div id="checkProgress" class="progress-bar hidden">
-                            <div id="checkProgressFill" class="progress-fill"></div>
-                        </div>
-                        <table class="metadata-table"><tbody id="checkSummaryBody"></tbody></table>
-                        <div id="checkList" class="integrity-list"></div>
-                        <button type="button" id="checkReportBtn" class="btn btn-secondary hidden">점검 결과 저장 (.txt)</button>
-                    </div>
+                    <div id="checkOverall" class="integrity-check hidden"></div>
+                    <div id="checkResults"></div>
+                    <button type="button" id="checkReportBtn" class="btn btn-secondary hidden">점검 결과 저장 (.txt)</button>
                 </div>
+            </div>
+
+            <div id="checkModal" class="check-modal hidden">
+                <div id="checkModalTitle" class="check-modal-title"></div>
+                <canvas id="checkModalCanvas"></canvas>
+                <div class="check-modal-hint">클릭하거나 Esc를 누르면 닫힙니다</div>
             </div>
 
             <!-- ===== Watermark Tool ===== -->
