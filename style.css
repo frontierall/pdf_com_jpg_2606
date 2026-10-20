@@ -1623,3 +1623,4 @@ textarea[readonly] {
 .check-modal.hidden { display: none; }
 .check-modal canvas { max-width: 100%; background: #fff; }
 .check-modal-title, .check-modal-hint { color: #fff; font-size: 13px; margin: 6px 0; }
+.check-option.hidden { display: none; }
