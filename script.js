@@ -319,6 +319,7 @@ const toolMap = {
     splitter:        splitterTool,
     pageEditor:      pageEditorTool,
     metadata:        metadataTool,
+    checker:         document.getElementById('checkerTool'),
     watermark:       watermarkTool,
     newsletterLinks: newsletterLinksTool,
 };

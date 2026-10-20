@@ -1599,3 +1599,17 @@ textarea[readonly] {
         flex: 1;
     }
 }
+
+/* ==================== PDF 점검 ==================== */
+.integrity-check { margin-top: 16px; padding: 14px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; }
+.integrity-check.hidden { display: none; }
+.integrity-status { font-weight: 600; margin-bottom: 10px; }
+.integrity-check.ok { border-color: #4caf50; background: #f1f9f1; }
+.integrity-check.ok .integrity-status { color: #2e7d32; }
+.integrity-check.warn { border-color: #e53935; background: #fff4f3; }
+.integrity-check.warn .integrity-status { color: #c62828; }
+.integrity-check .metadata-table { margin: 10px 0; }
+.integrity-check .btn { margin-top: 12px; }
+.integrity-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+.integrity-item { text-align: center; font-size: 13px; }
+.integrity-item img { display: block; max-width: 140px; border: 2px solid #e53935; border-radius: 4px; margin-bottom: 4px; }
